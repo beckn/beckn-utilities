@@ -58,7 +58,7 @@ To specify multiple files, just repeat the arguments (e.g. -b transaction.yaml -
   if (kosherArguments(validationArguments)) {
     return validationArguments;
   } else {
-    console.log("Use -h to see usage guide");
+    console.log("Wrong Configuration!!! Use -h to see usage guide");
     process.exit(1);
   }
 }

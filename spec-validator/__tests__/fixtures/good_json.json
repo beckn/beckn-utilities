@@ -1,0 +1,32 @@
+{
+  "openapi": "3.0.0",
+  "info": { "version": "1.0.0", "title": "Vehicles" },
+  "paths": {
+    "/vehicles": {
+      "get": {
+        "summary": "List all vehicles",
+        "responses": {
+          "200": {
+            "description": "An paged array of vehicles",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Vehicle" } } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Vehicle": {
+        "type": "object",
+        "required": ["id", "type"],
+        "properties": {
+          "id": { "type": "integer" },
+          "type": { "type": "string" },
+          "model": { "type": "string" },
+          "name": { "type": "string" }
+        },
+        "discriminator": { "propertyName": "type" }
+      }
+    }
+  }
+}

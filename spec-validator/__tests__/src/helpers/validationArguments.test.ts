@@ -1,7 +1,4 @@
-import {
-  getValidationArguments,
-  exportedForTesting,
-} from "../src/helpers/validationArguments";
+import { getValidationArguments, exportedForTesting } from "../../../src/helpers/validationArguments";
 
 test("without arguments", () => {
   const exitSpy = jest.spyOn(process, "exit").mockImplementation(() => {
@@ -18,9 +15,7 @@ test("for invalid arguments", () => {
   const exitSpy = jest.spyOn(process, "exit").mockImplementation(() => {
     throw new Error("Mock");
   });
-  const kosherArgumentsSpy = jest
-    .spyOn(exportedForTesting, "kosherArguments")
-    .mockImplementation(() => false);
+  const kosherArgumentsSpy = jest.spyOn(exportedForTesting, "kosherArguments").mockImplementation(() => false);
   expect(() => {
     getValidationArguments();
   }).toThrow();
@@ -58,14 +53,10 @@ describe("kosherArguments", () => {
   });
 
   test("for yaml-yaml check", () => {
-    expect(
-      kosherArguments({ baseSpec: ["def"], derivedSpec: ["ghi"] })
-    ).toEqual(true);
+    expect(kosherArguments({ baseSpec: ["def"], derivedSpec: ["ghi"] })).toEqual(true);
   });
 
   test("for yaml-json check", () => {
-    expect(kosherArguments({ baseSpec: ["def"], sampleJSON: ["ghi"] })).toEqual(
-      true
-    );
+    expect(kosherArguments({ baseSpec: ["def"], sampleJSON: ["ghi"] })).toEqual(true);
   });
 });
