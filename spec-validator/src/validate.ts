@@ -1,3 +1,1 @@
-import { getValidationArguments } from "./validationArguments";
-
-console.log(getValidationArguments());
+import { getValidationArguments } from "./helpers/validationArguments";

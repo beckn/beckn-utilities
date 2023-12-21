@@ -1,8 +1,7 @@
 import {
-  ValidationArguments,
   getValidationArguments,
   exportedForTesting,
-} from "./validationArguments";
+} from "../src/helpers/validationArguments";
 
 test("without arguments", () => {
   const exitSpy = jest.spyOn(process, "exit").mockImplementation(() => {
