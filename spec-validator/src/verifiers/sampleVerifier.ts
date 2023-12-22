@@ -15,6 +15,5 @@ export function verifySample(yamlSpec: string, jsonContent: string, componentNam
   if (valid) {
     return true;
   }
-  console.log(JSON.stringify(validate.errors, null, 2));
   throw new Error(JSON.stringify(validate.errors, null, 2));
 }

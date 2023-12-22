@@ -11,7 +11,33 @@ The tool can be operated in one of the following modes based on the requirement
 
 ## Options
 
--b, --baseSpec string[] Base yaml spec file  
--d, --derivedSpec string[] Derived yaml spec file  
--s, --sampleJSON string[] Sample JSON file to validate against base yaml spec file
--h, --help Print Usage guide
+-b, --baseSpec string[] - Base yaml spec file  
+-d, --derivedSpec string[] - Derived yaml spec file  
+-s, --sampleJSON string[] - Sample JSON file to validate against base yaml spec file
+-c, --componentName string - Name of the component that JSON is example of
+-h, --help - Print Usage guide
+
+## How to install
+
+### Pre requirements
+
+- Node and NPM should be installed on the machine
+
+### Steps
+
+- Clone the parent repository(it has multiple tools) using `git clone https://github.com/beckn/beckn-utilities.git`
+- Goto the spec-validator subfolder within the beckn-utilities folder.
+- Run `npm install` to install libraries that this tool depends on
+- Run `npm start -- -h` to see usage instructions. Note the space between `--` and `-h`
+
+## How to run
+
+- Here are some sample ways to run the tool. Use your own file paths instead of the paths starting with "**tests**"
+  - To check if a file is valid yaml `npm start -- -b __tests__/fixtures/base.yaml`
+  - To check if a derived yaml is as per the base yaml spcec `npm start -- -b __tests__/fixtures/base.yaml -d __tests__/fixtures/derived.yaml`
+  - To check if a file is valid json `npm start -- -s __tests__/fixtures/good_sample.json`
+  - To check if a json object in the file is as per the component in the spec `npm start -- -b __tests__/fixtures/derived.yaml -s __tests__/fixtures/good_sample.json -c Car`
+
+## How to run tests
+
+- After you run the install steps above, run `npm run test -- --silent`

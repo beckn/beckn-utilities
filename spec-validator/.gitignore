@@ -2,6 +2,7 @@ temp/
 node_modules/
 .node_modules/
 built/*
+build/*
 tests/cases/rwc/*
 tests/cases/perf/*
 !tests/cases/webharness/compilerToString.js
@@ -63,4 +64,3 @@ TEST-results.xml
 package-lock.json
 .eslintcache
 *v8.log
-/lib/
