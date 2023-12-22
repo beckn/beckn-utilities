@@ -8,7 +8,6 @@ export default class OpenAPIErrorBuilder {
   }
 
   formatError(error: any) {
-    console.log(error);
     return `${error.code} Source- ${JSON.stringify(error.sourceSpecEntityDetails[0])}, Dest-${JSON.stringify(
       error.destinationSpecEntityDetails[0]
     )}`;

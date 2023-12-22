@@ -4,6 +4,7 @@ export type ValidationArguments = {
   baseSpec?: string[];
   derivedSpec?: string[];
   sampleJSON?: string[];
+  componentName?: string;
   help?: boolean;
 };
 
@@ -31,6 +32,12 @@ export function getValidationArguments(): ValidationArguments {
         alias: "s",
         description: "Sample JSON file to validate against base yaml spec file",
       },
+      componentName: {
+        type: String,
+        optional: true,
+        alias: "c",
+        description: "Component in the spec that corresponds to the JSON sample",
+      },
       help: {
         type: Boolean,
         optional: true,
@@ -47,7 +54,7 @@ export function getValidationArguments(): ValidationArguments {
 1. To just check an yaml file for yaml syntax, provide it in the baseSpec argument (e.g. -b transaction.yaml)
 2. To check if a derived yaml spec is as per another base yaml spec, provide the baseSpec and derivedSpec arguments (e.g. -b transaction.yaml -d mobility.yaml)
 3. To just check a json file for json syntax, provide it in the sampleJSON argument (e.g. -s postmanRequest.json)
-4. To check if a json file is as per the yaml syntax, provide the baseSpec and sampleJSON arguments -b mobility.yaml -s postmanMobilityRequest.json
+4. To check if a json file is as per the yaml syntax, provide the baseSpec and sampleJSON arguments -b mobility.yaml -s postmanMobilityRequest.json -c Item
 
 To specify multiple files, just repeat the arguments (e.g. -b transaction.yaml -b meta.yaml)`,
         },
@@ -70,6 +77,7 @@ function kosherArguments(args: ValidationArguments): boolean {
   if (
     JSON.stringify(args) === "{}" ||
     (args.derivedSpec && !args.baseSpec) ||
+    (args.baseSpec && args.sampleJSON && !args.componentName) ||
     (args.baseSpec && args.derivedSpec && args.sampleJSON)
   ) {
     return false;

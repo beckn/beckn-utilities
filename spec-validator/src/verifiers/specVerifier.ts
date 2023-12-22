@@ -14,10 +14,8 @@ export async function verifySpec(baseYAMLContent: string, derivedYAMLContent: st
       format: "openapi3",
     },
   });
-  console.log(result);
-  // console.log();
   if (result.breakingDifferencesFound) {
-    throw new Error(new OpenAPIErrorBuilder(result).breakingErrors().join("----------\n"));
+    throw new Error(JSON.stringify(new OpenAPIErrorBuilder(result).breakingErrors(), null, 2));
   }
   return true;
 }
