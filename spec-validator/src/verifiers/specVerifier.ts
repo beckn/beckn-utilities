@@ -8,6 +8,7 @@ export async function verifySpec(
   derivedYAMLFN = "",
   verbose = false
 ): Promise<boolean> {
+  if (verbose) console.log(`Checking if ${derivedYAMLFN} is compliant with ${baseYAMLFN}`);
   const result = await OpenApiDiff.diffSpecs({
     sourceSpec: {
       content: baseYAMLContent,
@@ -23,5 +24,6 @@ export async function verifySpec(
   if (result.breakingDifferencesFound) {
     throw new Error(JSON.stringify(new OpenAPIErrorBuilder(result).breakingErrors(), null, 2));
   }
+  if (verbose) console.log("ok");
   return true;
 }

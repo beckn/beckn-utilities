@@ -1,10 +1,14 @@
 import { getValidationArguments, ValidationArguments } from "./helpers/validationArguments";
 import * as orchestrator from "./verifiers/orchestrator";
 
-export function validate(options: ValidationArguments) {
+export async function validate(options: ValidationArguments) {
   if (options.verbose) console.log("Start validation");
-  orchestrator.perform(options);
-  if (options.verbose) console.log("Validation successful");
+  const result = await orchestrator.perform(options);
+  if (result) {
+    if (options.verbose) console.log("Validation successful");
+  } else {
+    if (options.verbose) console.log("Validation failed");
+  }
 }
 
 if (require.main === module) {

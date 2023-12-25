@@ -1,4 +1,5 @@
 import OpenApiDiff from "openapi-diff";
+import { diff, diffString } from "json-diff";
 
 export default class OpenAPIErrorBuilder {
   constructor(public results: OpenApiDiff.DiffOutcome) {}
@@ -8,8 +9,19 @@ export default class OpenAPIErrorBuilder {
   }
 
   formatError(error: any) {
-    return `${error.code} Source- ${JSON.stringify(error.sourceSpecEntityDetails[0])}, Dest-${JSON.stringify(
-      error.destinationSpecEntityDetails[0]
-    )}`;
+    try {
+      const instances = [];
+      for (let i = 0; i < error["sourceSpecEntityDetails"].length; i++) {
+        if (!error["destinationSpecEntityDetails"]) break;
+        instances.push({
+          sourceLocation: error["sourceSpecEntityDetails"][i]["location"],
+          destinationLocation: error["destinationSpecEntityDetails"][i]["location"],
+          diff: diff(error["sourceSpecEntityDetails"][i]["value"], error["destinationSpecEntityDetails"][i]["value"]),
+        });
+      }
+      return instances;
+    } catch (e) {
+      return error;
+    }
   }
 }

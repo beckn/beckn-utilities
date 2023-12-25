@@ -5,18 +5,29 @@ import { verifySpec } from "./specVerifier";
 import { verifyYAML } from "./yamlVerifier";
 import * as fs from "fs";
 
-export function perform(options: ValidationArguments) {
-  if (options.baseSpec && !options.derivedSpec && !options.sampleJSON) {
-    onlyYAMLValidation(options.baseSpec, options.verbose);
-  } else if (options.baseSpec && options.derivedSpec) {
-    derivedSpecValidation(options.baseSpec, options.derivedSpec, options.verbose);
-  } else if (options.baseSpec && options.sampleJSON && options.componentName) {
-    sampleValidation(options.baseSpec, options.sampleJSON, options.componentName, options.verbose);
-  } else if (options.sampleJSON) {
-    onlyJSONValidation(options.sampleJSON);
-  } else {
-    console.log("Hmm. This seems to be a new use case. Please report the text below to the tool authors");
-    console.log(options);
+export async function perform(options: ValidationArguments) {
+  try {
+    if (options.baseSpec && !options.derivedSpec && !options.sampleJSON) {
+      onlyYAMLValidation(options.baseSpec, options.verbose);
+    } else if (options.baseSpec && options.derivedSpec) {
+      await derivedSpecValidation(options.baseSpec, options.derivedSpec, options.verbose);
+    } else if (options.baseSpec && options.sampleJSON && options.componentName) {
+      sampleValidation(options.baseSpec, options.sampleJSON, options.componentName, options.verbose);
+    } else if (options.sampleJSON) {
+      onlyJSONValidation(options.sampleJSON, options.verbose);
+    } else {
+      console.log("Hmm. This seems to be a new use case. Please report the text below to the tool authors");
+      console.log(options);
+      process.exit(0);
+    }
+    return true;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    } else {
+      throw error;
+    }
+    return false;
   }
 }
 
@@ -27,14 +38,14 @@ function onlyYAMLValidation(baseSpec: string[], verbose = false) {
   }
 }
 
-function derivedSpecValidation(baseSpec: string[], derivedSpec: string[], verbose = false) {
+async function derivedSpecValidation(baseSpec: string[], derivedSpec: string[], verbose = false) {
   for (const baseFile of baseSpec) {
     const baseYAML = fs.readFileSync(baseFile, "utf-8");
-    verifyYAML(baseYAML);
+    verifyYAML(baseYAML, baseFile, verbose);
     for (const derivedFile of derivedSpec) {
       const derivedYAML = fs.readFileSync(derivedFile, "utf-8");
-      verifyYAML(derivedYAML);
-      verifySpec(baseYAML, derivedYAML);
+      verifyYAML(derivedYAML, derivedFile, verbose);
+      await verifySpec(baseYAML, derivedYAML, baseFile, derivedFile, verbose);
     }
   }
 }
@@ -42,18 +53,18 @@ function derivedSpecValidation(baseSpec: string[], derivedSpec: string[], verbos
 function onlyJSONValidation(sampleJSON: string[], verbose = false) {
   for (const jsonFile of sampleJSON) {
     const jsonContent = fs.readFileSync(jsonFile, "utf-8");
-    verifyJSON(jsonContent, jsonFile);
+    verifyJSON(jsonContent, jsonFile, verbose);
   }
 }
 
 function sampleValidation(baseSpec: string[], sampleJSON: string[], componentName: string, verbose = false) {
   for (const baseFile of baseSpec) {
     const baseYAML = fs.readFileSync(baseFile, "utf-8");
-    verifyYAML(baseYAML);
+    verifyYAML(baseYAML, baseFile, verbose);
     for (const jsonFile of sampleJSON) {
       const jsonContent = fs.readFileSync(jsonFile, "utf-8");
-      verifyJSON(jsonContent);
-      verifySample(baseYAML, jsonContent, componentName);
+      verifyJSON(jsonContent, jsonFile, verbose);
+      verifySample(baseYAML, jsonContent, componentName, baseFile, jsonFile, verbose);
     }
   }
 }

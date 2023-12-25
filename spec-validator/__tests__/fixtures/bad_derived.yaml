@@ -28,27 +28,3 @@ components:
           type: string
       discriminator:
         propertyName: type
-    Car:
-      allOf:
-        - $ref: "#/components/schemas/Vehicle"
-        - type: object
-          properties:
-            type:
-              enum:
-                - car
-            has_4_wheel_drive:
-              type: boolean
-
-    Plane:
-      type: object
-      required:
-        - id
-        - type
-      properties:
-        type:
-          enum:
-            - plane
-        has_reactor:
-          type: boolean
-        nb_passengers:
-          type: integer
