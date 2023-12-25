@@ -1,7 +1,13 @@
 import OpenApiDiff from "openapi-diff";
 import OpenAPIErrorBuilder from "./openAPIErrorBuilder";
 
-export async function verifySpec(baseYAMLContent: string, derivedYAMLContent: string): Promise<boolean> {
+export async function verifySpec(
+  baseYAMLContent: string,
+  derivedYAMLContent: string,
+  baseYAMLFN = "",
+  derivedYAMLFN = "",
+  verbose = false
+): Promise<boolean> {
   const result = await OpenApiDiff.diffSpecs({
     sourceSpec: {
       content: baseYAMLContent,

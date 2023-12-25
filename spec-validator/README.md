@@ -15,13 +15,14 @@ The tool can be operated in one of the following modes based on the requirement
 -d, --derivedSpec string[] - Derived yaml spec file  
 -s, --sampleJSON string[] - Sample JSON file to validate against base yaml spec file
 -c, --componentName string - Name of the component that JSON is example of
+-v, --verbose boolean - Whether to print messages during the successful validation
 -h, --help - Print Usage guide
 
 ## How to install
 
 ### Pre requirements
 
-- Node and NPM should be installed on the machine
+- Node, Git and NPM should be installed on the machine
 
 ### Steps
 

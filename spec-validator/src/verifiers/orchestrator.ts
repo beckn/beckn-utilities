@@ -7,11 +7,11 @@ import * as fs from "fs";
 
 export function perform(options: ValidationArguments) {
   if (options.baseSpec && !options.derivedSpec && !options.sampleJSON) {
-    onlyYAMLValidation(options.baseSpec);
+    onlyYAMLValidation(options.baseSpec, options.verbose);
   } else if (options.baseSpec && options.derivedSpec) {
-    derivedSpecValidation(options.baseSpec, options.derivedSpec);
+    derivedSpecValidation(options.baseSpec, options.derivedSpec, options.verbose);
   } else if (options.baseSpec && options.sampleJSON && options.componentName) {
-    sampleValidation(options.baseSpec, options.sampleJSON, options.componentName);
+    sampleValidation(options.baseSpec, options.sampleJSON, options.componentName, options.verbose);
   } else if (options.sampleJSON) {
     onlyJSONValidation(options.sampleJSON);
   } else {
@@ -20,14 +20,14 @@ export function perform(options: ValidationArguments) {
   }
 }
 
-function onlyYAMLValidation(baseSpec: string[]) {
+function onlyYAMLValidation(baseSpec: string[], verbose = false) {
   for (const specFile of baseSpec) {
     const yamlContent = fs.readFileSync(specFile, "utf-8");
-    verifyYAML(yamlContent);
+    verifyYAML(yamlContent, specFile, verbose);
   }
 }
 
-function derivedSpecValidation(baseSpec: string[], derivedSpec: string[]) {
+function derivedSpecValidation(baseSpec: string[], derivedSpec: string[], verbose = false) {
   for (const baseFile of baseSpec) {
     const baseYAML = fs.readFileSync(baseFile, "utf-8");
     verifyYAML(baseYAML);
@@ -39,14 +39,14 @@ function derivedSpecValidation(baseSpec: string[], derivedSpec: string[]) {
   }
 }
 
-function onlyJSONValidation(sampleJSON: string[]) {
+function onlyJSONValidation(sampleJSON: string[], verbose = false) {
   for (const jsonFile of sampleJSON) {
     const jsonContent = fs.readFileSync(jsonFile, "utf-8");
-    verifyJSON(jsonContent);
+    verifyJSON(jsonContent, jsonFile);
   }
 }
 
-function sampleValidation(baseSpec: string[], sampleJSON: string[], componentName: string) {
+function sampleValidation(baseSpec: string[], sampleJSON: string[], componentName: string, verbose = false) {
   for (const baseFile of baseSpec) {
     const baseYAML = fs.readFileSync(baseFile, "utf-8");
     verifyYAML(baseYAML);

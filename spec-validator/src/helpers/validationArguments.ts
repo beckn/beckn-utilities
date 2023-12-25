@@ -5,6 +5,7 @@ export type ValidationArguments = {
   derivedSpec?: string[];
   sampleJSON?: string[];
   componentName?: string;
+  verbose?: boolean;
   help?: boolean;
 };
 
@@ -38,6 +39,13 @@ export function getValidationArguments(): ValidationArguments {
         alias: "c",
         description: "Component in the spec that corresponds to the JSON sample",
       },
+      verbose: {
+        type: Boolean,
+        alias: "v",
+        optional: true,
+        defaultValue: true,
+        description: "Verbose output on success",
+      },
       help: {
         type: Boolean,
         optional: true,
@@ -56,10 +64,17 @@ export function getValidationArguments(): ValidationArguments {
 3. To just check a json file for json syntax, provide it in the sampleJSON argument (e.g. -s postmanRequest.json)
 4. To check if a json file is as per the yaml syntax, provide the baseSpec and sampleJSON arguments -b mobility.yaml -s postmanMobilityRequest.json -c Item
 
-To specify multiple files, just repeat the arguments (e.g. -b transaction.yaml -b meta.yaml)`,
+To specify multiple files, just repeat the arguments (e.g. -b transaction.yaml -b meta.yaml)
+
+Examples:
+- To check if a file is valid yaml: npm start -- -b __tests__/fixtures/base.yaml\
+- To check if a derived yaml is as per the base yaml spec: npm start -- -b __tests__/fixtures/base.yaml -d __tests__/fixtures/derived.yaml
+- To check if a file is valid json: npm start -- -s __tests__/fixtures/good_sample.json
+- To check if a json object in the file is as per the component in the spec: npm start -- -b __tests__/fixtures/derived.yaml -s __tests__/fixtures/good_sample.json -c Car
+`,
         },
       ],
-      footerContentSections: [{ header: "Author", content: `Beckn utilities` }],
+      footerContentSections: [{ header: "Author", content: `Beckn team` }],
     }
   );
   if (kosherArguments(validationArguments)) {
@@ -75,7 +90,7 @@ function kosherArguments(args: ValidationArguments): boolean {
   if (args.derivedSpec?.length == 0) args.derivedSpec = undefined;
   if (args.sampleJSON?.length == 0) args.sampleJSON = undefined;
   if (
-    JSON.stringify(args) === "{}" ||
+    (!args.baseSpec && !args.sampleJSON) ||
     (args.derivedSpec && !args.baseSpec) ||
     (args.baseSpec && args.sampleJSON && !args.componentName) ||
     (args.baseSpec && args.derivedSpec && args.sampleJSON)

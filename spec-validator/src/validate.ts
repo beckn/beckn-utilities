@@ -2,9 +2,9 @@ import { getValidationArguments, ValidationArguments } from "./helpers/validatio
 import * as orchestrator from "./verifiers/orchestrator";
 
 export function validate(options: ValidationArguments) {
-  console.log("Start validation");
+  if (options.verbose) console.log("Start validation");
   orchestrator.perform(options);
-  console.log("Validation successful");
+  if (options.verbose) console.log("Validation successful");
 }
 
 if (require.main === module) {

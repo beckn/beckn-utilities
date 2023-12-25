@@ -1,7 +1,14 @@
 import Ajv from "ajv";
 import * as yaml from "yaml";
 
-export function verifySample(yamlSpec: string, jsonContent: string, componentName: string) {
+export function verifySample(
+  yamlSpec: string,
+  jsonContent: string,
+  componentName: string,
+  yamlFN = "",
+  jsonFN = "",
+  verbose = false
+) {
   const schema = yaml.parse(yamlSpec);
   const data = JSON.parse(jsonContent);
   const ajv = new Ajv();
