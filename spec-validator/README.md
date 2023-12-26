@@ -11,12 +11,14 @@ The tool can be operated in one of the following modes based on the requirement
 
 ## Options
 
--b, --baseSpec string[] - Base yaml spec file  
--d, --derivedSpec string[] - Derived yaml spec file  
+```
+-b, --baseSpec string[] - Base yaml spec file
+-d, --derivedSpec string[] - Derived yaml spec file
 -s, --sampleJSON string[] - Sample JSON file to validate against base yaml spec file
 -c, --componentPath string - Path of the component that JSON is example of
 -v, --verbose boolean - Whether to print messages during the successful validation
 -h, --help - Print Usage guide
+```
 
 ## How to install
 
