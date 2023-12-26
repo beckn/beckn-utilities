@@ -4,7 +4,7 @@ export type ValidationArguments = {
   baseSpec?: string[];
   derivedSpec?: string[];
   sampleJSON?: string[];
-  componentName?: string;
+  componentPath?: string;
   verbose?: boolean;
   help?: boolean;
 };
@@ -33,7 +33,7 @@ export function getValidationArguments(): ValidationArguments {
         alias: "s",
         description: "Sample JSON file to validate against base yaml spec file",
       },
-      componentName: {
+      componentPath: {
         type: String,
         optional: true,
         alias: "c",
@@ -70,7 +70,7 @@ Examples:
 - To check if a file is valid yaml: npm start -- -b __tests__/fixtures/base.yaml\
 - To check if a derived yaml is as per the base yaml spec: npm start -- -b __tests__/fixtures/base.yaml -d __tests__/fixtures/derived.yaml
 - To check if a file is valid json: npm start -- -s __tests__/fixtures/good_sample.json
-- To check if a json object in the file is as per the component in the spec: npm start -- -b __tests__/fixtures/derived.yaml -s __tests__/fixtures/good_sample.json -c Car
+- To check if a json object in the file is as per the component in the spec: npm start -- -b __tests__/fixtures/derived.yaml -s __tests__/fixtures/good_sample.json -c Components/Schemas/Car
 `,
         },
       ],
@@ -89,12 +89,20 @@ function kosherArguments(args: ValidationArguments): boolean {
   if (args.baseSpec?.length == 0) args.baseSpec = undefined;
   if (args.derivedSpec?.length == 0) args.derivedSpec = undefined;
   if (args.sampleJSON?.length == 0) args.sampleJSON = undefined;
-  if (
-    (!args.baseSpec && !args.sampleJSON) ||
-    (args.derivedSpec && !args.baseSpec) ||
-    (args.baseSpec && args.sampleJSON && !args.componentName) ||
-    (args.baseSpec && args.derivedSpec && args.sampleJSON)
-  ) {
+  if (!args.baseSpec && !args.sampleJSON) {
+    console.log("Either specification or sample should be provided");
+    return false;
+  }
+  if (args.derivedSpec && !args.baseSpec) {
+    console.log("When derived spec is specified, base spec should also be specified");
+    return false;
+  }
+  if (args.baseSpec && args.sampleJSON && !args.componentPath) {
+    console.log("To verify sample, the path of the component should be specified");
+    return false;
+  }
+  if (args.baseSpec && args.derivedSpec && args.sampleJSON) {
+    console.log("All three of base spec, derived spec and sample json cannot be used together");
     return false;
   }
   return true;

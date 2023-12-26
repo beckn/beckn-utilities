@@ -14,7 +14,7 @@ The tool can be operated in one of the following modes based on the requirement
 -b, --baseSpec string[] - Base yaml spec file  
 -d, --derivedSpec string[] - Derived yaml spec file  
 -s, --sampleJSON string[] - Sample JSON file to validate against base yaml spec file
--c, --componentName string - Name of the component that JSON is example of
+-c, --componentPath string - Path of the component that JSON is example of
 -v, --verbose boolean - Whether to print messages during the successful validation
 -h, --help - Print Usage guide
 
@@ -37,7 +37,24 @@ The tool can be operated in one of the following modes based on the requirement
   - To check if a file is valid yaml `npm start -- -b __tests__/fixtures/base.yaml`
   - To check if a derived yaml is as per the base yaml spcec `npm start -- -b __tests__/fixtures/base.yaml -d __tests__/fixtures/derived.yaml`
   - To check if a file is valid json `npm start -- -s __tests__/fixtures/good_sample.json`
-  - To check if a json object in the file is as per the component in the spec `npm start -- -b __tests__/fixtures/derived.yaml -s __tests__/fixtures/good_sample.json -c Car`
+  - To check if a json object in the file is as per the component in the spec `npm start -- -b __tests__/fixtures/derived.yaml -s __tests__/fixtures/good_sample.json -c "Components/Schemas/Car"`
+
+## Example commands
+
+```
+// Check if the core spec is valid yaml and has all refs
+npm start -- -b temp/core.yaml
+// Check if the mobility spec is valid derivation of core spec
+npm start -- -b temp/core.yaml -d temp/mobility.yaml
+// Check if request is valid json
+npm start -- -s temp/mobility_search_request.json
+// Check if a mobility search request is as per the spec
+npm start -- -b temp/mobility.yaml -s temp/mobility_search_request.json -c paths./search.post.requestBody.content.application/json.schema
+// Check if a mobility search response is as per the spec
+npm start -- -b temp/mobility.yaml -s temp/mobility_on_search.json -c paths./on_search.post.requestBody.content.application/json.schema
+// Check if a component json is as per the component schema specified in the mobility spec
+npm start -- -b temp/mobility.yaml -s temp/fulfillment.json -c components.schemas.Fulfillment
+```
 
 ## How to run tests
 

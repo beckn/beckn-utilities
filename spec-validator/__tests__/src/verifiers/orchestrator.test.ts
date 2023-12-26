@@ -21,15 +21,15 @@ afterEach(() => {
 });
 
 describe("only yaml verification", () => {
-  test("calls the yaml verifier", () => {
-    perform({ baseSpec: ["__tests__/fixtures/base.yaml"] });
+  test("calls the yaml verifier", async () => {
+    await perform({ baseSpec: ["__tests__/fixtures/base.yaml"] });
     expect(verifyYAML).toHaveBeenCalledTimes(1);
     expect(verifyJSON).not.toHaveBeenCalled();
     expect(verifySpec).not.toHaveBeenCalled();
     expect(verifySample).not.toHaveBeenCalled();
   });
-  test("with multiple files, calls once for each file", () => {
-    perform({ baseSpec: ["__tests__/fixtures/base.yaml", "__tests__/fixtures/derived.yaml"] });
+  test("with multiple files, calls once for each file", async () => {
+    await perform({ baseSpec: ["__tests__/fixtures/base.yaml", "__tests__/fixtures/derived.yaml"] });
     expect(verifyYAML).toHaveBeenCalledTimes(2);
     expect(verifyJSON).not.toHaveBeenCalled();
     expect(verifySpec).not.toHaveBeenCalled();
@@ -38,16 +38,16 @@ describe("only yaml verification", () => {
 });
 
 describe("only json verification", () => {
-  test("calls the json verifier", () => {
-    perform({ sampleJSON: ["__tests__/fixtures/good_sample.json"] });
+  test("calls the json verifier", async () => {
+    await perform({ sampleJSON: ["__tests__/fixtures/good_sample.json"] });
     expect(verifyYAML).not.toHaveBeenCalled();
     expect(verifyJSON).toHaveBeenCalledTimes(1);
     expect(verifySpec).not.toHaveBeenCalled();
     expect(verifySample).not.toHaveBeenCalled();
   });
 
-  test("with multiple files, calls once for each file", () => {
-    perform({ sampleJSON: ["__tests__/fixtures/good_sample.json", "__tests__/fixtures/good_sample.json"] });
+  test("with multiple files, calls once for each file", async () => {
+    await perform({ sampleJSON: ["__tests__/fixtures/good_sample.json", "__tests__/fixtures/good_sample.json"] });
     expect(verifyYAML).not.toHaveBeenCalled();
     expect(verifyJSON).toHaveBeenCalledTimes(2);
     expect(verifySpec).not.toHaveBeenCalled();
@@ -56,8 +56,8 @@ describe("only json verification", () => {
 });
 
 describe("spec verification", () => {
-  test("calls the yaml verifier and spec verifier", () => {
-    perform({ baseSpec: ["__tests__/fixtures/base.yaml"], derivedSpec: ["__tests__/fixtures/derived.yaml"] });
+  test("calls the yaml verifier and spec verifier", async () => {
+    await perform({ baseSpec: ["__tests__/fixtures/base.yaml"], derivedSpec: ["__tests__/fixtures/derived.yaml"] });
     expect(verifyYAML).toHaveBeenCalledTimes(2);
     expect(verifyJSON).not.toHaveBeenCalled();
     expect(verifySpec).toHaveBeenCalledTimes(1);
@@ -66,11 +66,11 @@ describe("spec verification", () => {
 });
 
 describe("sample verification", () => {
-  test("calls the yaml verifier, json verifier and sample verifier", () => {
-    perform({
+  test("calls the yaml verifier, json verifier and sample verifier", async () => {
+    await perform({
       baseSpec: ["__tests__/fixtures/derived.yaml"],
       sampleJSON: ["__tests__/fixtures/good_sample.json"],
-      componentName: "Car",
+      componentPath: "Components.Schemas.Car",
     });
     expect(verifyYAML).toHaveBeenCalledTimes(1);
     expect(verifyJSON).toHaveBeenCalledTimes(1);

@@ -57,6 +57,6 @@ describe("kosherArguments", () => {
   });
 
   test("for yaml-json check", () => {
-    expect(kosherArguments({ baseSpec: ["def"], sampleJSON: ["ghi"], componentName: "jkl" })).toEqual(true);
+    expect(kosherArguments({ baseSpec: ["def"], sampleJSON: ["ghi"], componentPath: "jkl" })).toEqual(true);
   });
 });
