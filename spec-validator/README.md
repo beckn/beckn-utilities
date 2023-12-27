@@ -7,7 +7,7 @@ The tool can be operated in one of the following modes based on the requirement
 1. To just check an yaml file for yaml syntax, provide it in the baseSpec argument (e.g. -b transaction.yaml)
 2. To check if a derived yaml spec is as per another base yaml spec, provide the baseSpec and derivedSpec arguments (e.g. -b transaction.yaml -d mobility.yaml)
 3. To just check a json file for json syntax, provide it in the sampleJSON argument (e.g. -s postmanRequest.json)
-4. To check if a json file is as per the yaml syntax, provide the baseSpec and sampleJSON arguments -b mobility.yaml -s postmanMobilityRequest.json
+4. To check if a json file is as per the yaml syntax, provide the baseSpec and sampleJSON arguments -b mobility.yaml -s intentSample.json -c components.schemas.Intent
 
 ## Options
 
@@ -35,25 +35,39 @@ The tool can be operated in one of the following modes based on the requirement
 
 ## How to run
 
-- Here are some sample ways to run the tool. Use your own file paths instead of the paths starting with "**tests**"
-  - To check if a file is valid yaml `npm start -- -b __tests__/fixtures/base.yaml`
-  - To check if a derived yaml is as per the base yaml spcec `npm start -- -b __tests__/fixtures/base.yaml -d __tests__/fixtures/derived.yaml`
-  - To check if a file is valid json `npm start -- -s __tests__/fixtures/good_sample.json`
-  - To check if a json object in the file is as per the component in the spec `npm start -- -b __tests__/fixtures/derived.yaml -s __tests__/fixtures/good_sample.json -c "Components/Schemas/Car"`
-
-## Example commands
+- Here are some sample ways to run the tool. Examples use the fixtures contained in the repo
 
 ```
-// Check if the core spec is valid yaml and has all refs
-npm start -- -b temp/core.yaml
+// To check if a file is valid yaml
+npm start -- -b __tests__/fixtures/base.yaml
+npm start -- -b __tests__/fixtures/bad_yaml.yaml
+
+//To check if a derived yaml is as per the base yaml spec
+npm start -- -b __tests__/fixtures/base.yaml -d __tests__/fixtures/derived.yaml
+npm start -- -b __tests__/fixtures/base.yaml -d __tests__/fixtures/bad_derived.yaml
+
+//To check if a file is valid json
+npm start -- -s __tests__/fixtures/good_sample.json
+npm start -- -s __tests__/fixtures/bad_json.json
+
+//To check if a json object in the file is as per the component in the spec
+npm start -- -b __tests__/fixtures/derived.yaml -s __tests__/fixtures/good_sample.json -c components.schemas.Car
+npm start -- -b __tests__/fixtures/derived.yaml -s __tests__/fixtures/bad_sample.json -c components.schemas.Car
+
+```
+
+- Beckn examples (yaml and json files not included in repo)
+
+```
 // Check if the mobility spec is valid derivation of core spec
 npm start -- -b temp/core.yaml -d temp/mobility.yaml
-// Check if request is valid json
-npm start -- -s temp/mobility_search_request.json
+
 // Check if a mobility search request is as per the spec
 npm start -- -b temp/mobility.yaml -s temp/mobility_search_request.json -c paths./search.post.requestBody.content.application/json.schema
+
 // Check if a mobility search response is as per the spec
 npm start -- -b temp/mobility.yaml -s temp/mobility_on_search.json -c paths./on_search.post.requestBody.content.application/json.schema
+
 // Check if a component json is as per the component schema specified in the mobility spec
 npm start -- -b temp/mobility.yaml -s temp/fulfillment.json -c components.schemas.Fulfillment
 ```

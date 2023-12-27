@@ -70,7 +70,7 @@ Examples:
 - To check if a file is valid yaml: npm start -- -b __tests__/fixtures/base.yaml\
 - To check if a derived yaml is as per the base yaml spec: npm start -- -b __tests__/fixtures/base.yaml -d __tests__/fixtures/derived.yaml
 - To check if a file is valid json: npm start -- -s __tests__/fixtures/good_sample.json
-- To check if a json object in the file is as per the component in the spec: npm start -- -b __tests__/fixtures/derived.yaml -s __tests__/fixtures/good_sample.json -c Components/Schemas/Car
+- To check if a json object in the file is as per the component in the spec: npm start -- -b __tests__/fixtures/derived.yaml -s __tests__/fixtures/good_sample.json -c components.schemas.Car
 `,
         },
       ],

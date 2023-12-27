@@ -1,8 +1,6 @@
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import * as yaml from "yaml";
-import { openapiSchemaToJsonSchema } from "@openapi-contrib/openapi-schema-to-json-schema";
-import OpenAPISchemaValidator from "openapi-schema-validator";
 import $RefParser from "@apidevtools/json-schema-ref-parser";
 
 export async function verifySample(
@@ -14,10 +12,13 @@ export async function verifySample(
   verbose = false
 ) {
   if (verbose) console.log(`Verifying ${jsonFN} against ${yamlFN}`);
-  const schema = yaml.parse(yamlSpec);
-  const data = JSON.parse(jsonContent);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const schema: any = yaml.parse(yamlSpec);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const data: any = JSON.parse(jsonContent);
 
-  let derefSchema: any = await $RefParser.dereference(schema);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  const derefSchema: any = await $RefParser.dereference(schema);
   const ajv = new Ajv();
   addFormats(ajv);
   ajv.addKeyword("discriminator");
@@ -30,6 +31,7 @@ export async function verifySample(
   throw new Error(JSON.stringify(validate.errors, null, 2));
 }
 
-function fetchByDotOperator(object: any, value: string) {
+function fetchByDotOperator(object: any, value: string): any {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
   return value.split(".").reduce((acc, curr) => acc[curr], object);
 }

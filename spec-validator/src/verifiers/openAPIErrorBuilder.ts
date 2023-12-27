@@ -1,14 +1,16 @@
 import OpenApiDiff from "openapi-diff";
-import { diff, diffString } from "json-diff";
+import { DiffResult } from "openapi-diff";
+import { diff } from "json-diff";
 
 export default class OpenAPIErrorBuilder {
   constructor(public results: OpenApiDiff.DiffOutcome) {}
-  breakingErrors() {
+  breakingErrors(): any {
     if (!this.results.breakingDifferencesFound) return [];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.results.breakingDifferences.map((x) => this.formatError(x));
   }
 
-  formatError(error: any) {
+  formatError(error: DiffResult<"breaking">): any {
     try {
       const instances = [];
       for (let i = 0; i < error["sourceSpecEntityDetails"].length; i++) {
@@ -16,6 +18,7 @@ export default class OpenAPIErrorBuilder {
         instances.push({
           sourceLocation: error["sourceSpecEntityDetails"][i]["location"],
           destinationLocation: error["destinationSpecEntityDetails"][i]["location"],
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           diff: diff(error["sourceSpecEntityDetails"][i]["value"], error["destinationSpecEntityDetails"][i]["value"]),
         });
       }

@@ -15,7 +15,7 @@ test("for invalid arguments", () => {
   const exitSpy = jest.spyOn(process, "exit").mockImplementation(() => {
     throw new Error("Mock");
   });
-  const kosherArgumentsSpy = jest.spyOn(exportedForTesting, "kosherArguments").mockImplementation(() => false);
+  jest.spyOn(exportedForTesting, "kosherArguments").mockImplementation(() => false);
   expect(() => {
     getValidationArguments();
   }).toThrow();

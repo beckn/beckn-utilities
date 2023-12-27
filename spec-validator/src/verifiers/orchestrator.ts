@@ -14,7 +14,7 @@ export async function perform(options: ValidationArguments) {
     } else if (options.baseSpec && options.sampleJSON && options.componentPath) {
       await sampleValidation(options.baseSpec, options.sampleJSON, options.componentPath, options.verbose);
     } else if (options.sampleJSON) {
-      await onlyJSONValidation(options.sampleJSON, options.verbose);
+      onlyJSONValidation(options.sampleJSON, options.verbose);
     } else {
       console.log("Hmm. This seems to be a new use case. Please report the text below to the tool authors");
       console.log(options);
@@ -23,7 +23,7 @@ export async function perform(options: ValidationArguments) {
     return true;
   } catch (error) {
     if (error instanceof Error) {
-      console.log(error.message);
+      console.log(translateErrorMessage(error.message));
     } else {
       throw error;
     }
@@ -50,7 +50,7 @@ async function derivedSpecValidation(baseSpec: string[], derivedSpec: string[], 
   }
 }
 
-async function onlyJSONValidation(sampleJSON: string[], verbose = false) {
+function onlyJSONValidation(sampleJSON: string[], verbose = false) {
   for (const jsonFile of sampleJSON) {
     const jsonContent = fs.readFileSync(jsonFile, "utf-8");
     verifyJSON(jsonContent, jsonFile, verbose);
@@ -67,4 +67,10 @@ async function sampleValidation(baseSpec: string[], sampleJSON: string[], compon
       await verifySample(baseYAML, jsonContent, componentPath, baseFile, jsonFile, verbose);
     }
   }
+}
+
+function translateErrorMessage(message: string): string {
+  if (message === "schema must be object or boolean")
+    return "The specified component path could not be found. Please check the path";
+  return message;
 }
