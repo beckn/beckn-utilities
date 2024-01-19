@@ -16,6 +16,11 @@
   ],
   "author": "Beckn team",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/beckn/beckn-utilities.git",
+    "directory": "beckn-spec-validator"
+  },
   "devDependencies": {
     "@types/jest": "^29.5.11",
     "@typescript-eslint/eslint-plugin": "^6.16.0",
