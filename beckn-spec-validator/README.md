@@ -30,16 +30,39 @@ To specify multiple files, just repeat the arguments (e.g. ts-node src/validate.
 
 - Node, Git and NPM should be installed on the machine
 
-### Steps
+### Installation
+- Run the following command
 
-- Clone the parent repository(it has multiple tools) using `git clone https://github.com/beckn/beckn-utilities.git`
-- Goto the spec-validator subfolder within the beckn-utilities folder.
-- Run `npm install` to install libraries that this tool depends on
-- Run `npm start -- -h` to see usage instructions. Note the space between `--` and `-h`
+```
+npm install -g beckn-spec-validator
+```
 
 ## How to run
 
-- Here are some sample ways to run the tool. Examples use the fixtures contained in the repo
+- Here are some sample ways to run the tool. Beckn examples (yaml and json files not included in repo)
+
+```
+// Check if the mobility spec is valid derivation of core spec
+beckn-spec-validator -b temp/core.yaml -d temp/mobility.yaml
+
+// Check if a mobility search request is as per the spec
+beckn-spec-validator -b temp/mobility.yaml -s temp/mobility_search_request.json -c paths./search.post.requestBody.content.application/json.schema
+
+// Check if a mobility search response is as per the spec
+beckn-spec-validator -b temp/mobility.yaml -s temp/mobility_on_search.json -c paths./on_search.post.requestBody.content.application/json.schema
+
+// Check if a component json is as per the component schema specified in the mobility spec
+beckn-spec-validator -b temp/mobility.yaml -s temp/fulfillment.json -c components.schemas.Fulfillment
+
+```
+
+### Installation and run from source code
+
+- Clone the parent repository(it has multiple tools) using `git clone https://github.com/beckn/beckn-utilities.git`
+- Goto the beckn-spec-validator subfolder within the beckn-utilities folder.
+- Run `npm install` to install libraries that this tool depends on
+- Run `npm start -- -h` to see usage instructions. Note the space between `--` and `-h`
+- You can run the following fixture files.
 
 ```
 // To check if a file is valid yaml
@@ -58,22 +81,6 @@ npm start -- -s __tests__/fixtures/bad_json.json
 npm start -- -b __tests__/fixtures/derived.yaml -s __tests__/fixtures/good_sample.json -c components.schemas.Car
 npm start -- -b __tests__/fixtures/derived.yaml -s __tests__/fixtures/bad_sample.json -c components.schemas.Car
 
-```
-
-- Beckn examples (yaml and json files not included in repo)
-
-```
-// Check if the mobility spec is valid derivation of core spec
-npm start -- -b temp/core.yaml -d temp/mobility.yaml
-
-// Check if a mobility search request is as per the spec
-npm start -- -b temp/mobility.yaml -s temp/mobility_search_request.json -c paths./search.post.requestBody.content.application/json.schema
-
-// Check if a mobility search response is as per the spec
-npm start -- -b temp/mobility.yaml -s temp/mobility_on_search.json -c paths./on_search.post.requestBody.content.application/json.schema
-
-// Check if a component json is as per the component schema specified in the mobility spec
-npm start -- -b temp/mobility.yaml -s temp/fulfillment.json -c components.schemas.Fulfillment
 ```
 
 ## How to run tests
