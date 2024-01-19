@@ -1,15 +1,20 @@
 {
-  "name": "spec-validator",
+  "name": "beckn-spec-validator",
   "version": "1.0.0",
-  "description": "",
+  "description": "Tool to validate beckn specs and samples",
   "main": "index.js",
   "scripts": {
     "build": "rimraf ./build && tsc",
     "start": "npm run build && node build/validate.js",
     "test": "jest"
   },
-  "keywords": [],
-  "author": "",
+  "bin": {
+    "beckn-spec-validator": "./build/validate.js"
+  },
+  "keywords": [
+    "Beckn"
+  ],
+  "author": "Beckn team",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^29.5.11",

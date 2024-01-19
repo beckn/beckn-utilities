@@ -1,6 +1,6 @@
 ## Yaml and JSON validator tool
 
-To specify multiple files, just repeat the arguments (e.g. ts-node src/validate.ts -b transaction.yaml -b meta.yaml)
+This tool helps validate Beckn domain specific yaml files as well as json examples of nodes from the corresponding yaml spec.
 
 The tool can be operated in one of the following modes based on the requirement
 
@@ -9,7 +9,11 @@ The tool can be operated in one of the following modes based on the requirement
 3. To just check a json file for json syntax, provide it in the sampleJSON argument (e.g. -s postmanRequest.json)
 4. To check if a json file is as per the yaml syntax, provide the baseSpec and sampleJSON arguments -b mobility.yaml -s intentSample.json -c components.schemas.Intent
 
+Modes 2 and 4 above are the primary use cases and they will also do the checks in mode 1 and 3.
+
 ## Options
+
+To specify multiple files, just repeat the arguments (e.g. ts-node src/validate.ts -b transaction.yaml -b meta.yaml)
 
 ```
 -b, --baseSpec string[] - Base yaml spec file
