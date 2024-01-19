@@ -79,3 +79,7 @@ npm start -- -b temp/mobility.yaml -s temp/fulfillment.json -c components.schema
 ## How to run tests
 
 - After you run the install steps above, run `npm run test -- --silent`
+
+## How to use this as a pre-commit hook.
+
+- Because each time we run the validator tool with a different file, it requires different command line arguments, using this as a pre-commit hook is a bit unweildy. However this [Precommit-hook instructions](Precommit-hook.md) gives some tips on how to do it.
