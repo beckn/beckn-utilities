@@ -19,7 +19,7 @@ export async function verifySample(
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const derefSchema: any = await $RefParser.dereference(schema);
-  const ajv = new Ajv();
+  const ajv = new Ajv({ formats: { phone: true } });
   addFormats(ajv);
   ajv.addKeyword("discriminator");
   const validate = ajv.compile(fetchByDotOperator(derefSchema, componentPath));

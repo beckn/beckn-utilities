@@ -1,6 +1,6 @@
 {
   "name": "beckn-spec-validator",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Tool to validate beckn specs and samples",
   "main": "index.js",
   "scripts": {
