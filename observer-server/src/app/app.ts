@@ -72,12 +72,21 @@ export const initApp = (app: Express): HttpServer => {
     }
   });
   io.of("/socket").on("connection", (socket) => {
-    telmetryEventListner.on("telemetry_update", (telemetryData) => {
-      socket.emit("telemetry_data", {
-        data: telemetryData,
-        message: "Telemetry Data Updated"
+    try {
+      console.log("New Socket Create with Socker Id==>", socket.id);
+      telmetryEventListner.on("telemetry_update", (telemetryData) => {
+        console.log(
+          "Telemetry Update Received===>",
+          JSON.stringify(telemetryData)
+        );
+        socket.emit("telemetry_data", {
+          data: telemetryData,
+          message: "Telemetry Data Updated"
+        });
       });
-    });
+    } catch (error) {
+      console.log("Socket Error====>", error);
+    }
   });
 
   return createServer;
