@@ -37,6 +37,7 @@ echo "${GREEN}................Installing Gateway service................${NC}"
 start_container gateway
 echo "Registering Gateway in the registry"
 sleep 5
+./register_gateway.sh
 echo "Gateway installation successful"
 
 #Start the MongoDB, Redis and RabbitMQ Services.

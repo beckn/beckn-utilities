@@ -16,7 +16,6 @@ services:
 
   gateway:
     image: fidedocker/gateway
-    # build: .
     depends_on:
       - registry
     container_name: gateway
@@ -32,7 +31,6 @@ services:
 
   bap-client:
     image: fidedocker/protocol-server
-    # build: .
     depends_on:
       - registry
       - gateway
@@ -47,7 +45,6 @@ services:
 
   bap-network:
     image: fidedocker/protocol-server
-    # build: .
     depends_on:
       - registry
       - gateway
@@ -62,7 +59,6 @@ services:
 
   sandbox-api:
     image: fidedocker/sandbox-api
-    # build: .
     depends_on:
       - registry
       - gateway
@@ -79,7 +75,6 @@ services:
 
   sandbox-webhook:
     image: fidedocker/sandbox-webhook-api
-    # build: .
     depends_on:
       - registry
       - gateway
@@ -95,7 +90,6 @@ services:
 
   bpp-client:
     image: fidedocker/protocol-server
-    # build: .
     depends_on:
       - registry
       - gateway
@@ -110,7 +104,6 @@ services:
 
   bpp-network:
     image: fidedocker/protocol-server
-    # build: .
     depends_on:
       - registry
       - gateway
