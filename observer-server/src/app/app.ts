@@ -1,4 +1,4 @@
-import express, { Express, Router, Request, Response } from "express";
+import express, { Express, Router, Request, Response, response } from "express";
 import dotenv from "dotenv";
 import http, { Server as HttpServer } from "http";
 import cors from "cors";
@@ -64,6 +64,20 @@ export const initApp = (app: Express): HttpServer => {
       status: 200,
       message: "Telemetry Data Received"
     });
+  });
+  app.post("/clear-cache", (req: Request, res: Response) => {
+    try {
+      cache.clear();
+      return res.status(200).json({
+        message: "Cache Cleared",
+        success: true
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        message: `Cache not Cleared due to ${error.message}`,
+        success: false
+      });
+    }
   });
   const io = new Server(createServer, {
     cors: {
