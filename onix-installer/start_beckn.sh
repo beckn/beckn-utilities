@@ -23,6 +23,10 @@ start_support_services(){
     echo "Redis installation successful"
 }
 
+echo "${GREEN}................Installing required packages................{NC}"
+./package_manager.sh
+echo "Package Installation is done"
+
 echo "${GREEN}................Installing Registry service................{NC}"
 start_container registry
 sleep 10
