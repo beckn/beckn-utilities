@@ -1,0 +1,124 @@
+# Mandatory
+server:
+  port: BPP_CLIENT_PORT
+
+# Mandatory.
+cache:
+  host: "redis"
+  port: 6379
+  ttl: "PT10M"
+  # Optional. Default is 0.
+  db: 0 
+
+# Optional.
+responseCache:
+  mongoURL: "mongodb://beckn:beckn123@mongoDB:27017/protocol_server?authSource=admin"
+  ttl: "PT10M"
+
+# Mandatory.
+# Priority order will be
+# 1. Synchronous
+# 2. webhook
+# 3. pubSub
+client:
+#   synchronous: 
+#     mongoURL: "mongodb://tvast:password@mongoDB:27017/ps?authSource=admin"
+
+  webhook:
+   url: "http://sandbox-webhook:3005"
+  
+  #messageQueue: 
+  #  amqpURL: "amqp://guest:guest@localhost:5672"
+  #  incomingQueue: "protocol-server-incoming"
+  #  outgoingQueue: "protocol-server-outgoing"
+
+# Mandatory.
+app:
+  # Mandatory.
+  mode: bpp
+
+  # Two types of gateway mode present.
+  # client and network.
+  gateway:
+    mode: client
+    inboxQueue: "inbox-bpp"
+    outboxQueue: "outbox-bpp"
+    amqpURL: "amqp://beckn:beckn123@rabbitmq:5672"
+
+  # Mandatory.
+  actions:
+    requests:
+      search:
+        ttl : "PT15S"
+      init:
+        ttl : "PT10S"
+      select:
+        ttl : "PT10S"
+      confirm:
+        ttl : "PT10S"
+      status:
+        ttl : "PT10S"
+      track:
+        ttl : "PT10S"
+      cancel:
+        ttl : "PT10S"
+      update:
+        ttl : "PT10S"
+      rating:
+        ttl : "PT10S"
+      support:
+        ttl : "PT10S"
+      get_cancellation_reasons:
+        ttl: "PT10S"
+      get_rating_categories:
+        ttl: "PT10S"          
+    
+    responses: 
+      on_search:
+        ttl: "PT15S"
+      on_init:
+        ttl: "PT10S"
+      on_select:
+        ttl: "PT10S"
+      on_confirm:
+        ttl: "PT10S"
+      on_status:
+        ttl: "PT10S"
+      on_track:
+        ttl: "PT10S"
+      on_cancel:
+        ttl: "PT10S"
+      on_update:
+        ttl: "PT10S"
+      on_rating:
+        ttl: "PT10S"
+      on_support:
+        ttl: "PT10S"
+      cancellation_reasons:
+        ttl: "PT10S"
+      rating_categories:
+        ttl: "PT10S"          
+  
+  # Mandatory.
+  privateKey: "/Ka10Cy83GRaxM3TzJTw4ddo5TpCYxv6MrH3LpXvmpdxdwMXOCEQu1+OcdcsAxOLCZ+yuCV3Bh7UbgAOaD0juA=="
+  publicKey: "cXcDFzghELtfjnHXLAMTiwmfsrgldwYe1G4ADmg9I7g="
+
+  # Mandatory.
+  subscriberId: "bpp-network"
+  subscriberUri: "http://bpp-network:5002"
+
+  # Mandatory.
+  registryUrl: http://:3030/subscribers
+  auth: true
+  uniqueKey: "bpp-network-key"
+  
+  # Mandatory.
+  city: "std:080"
+  country: "IND"
+
+  # Mandatory.
+  ttl: "PT10M"
+
+  # Mandatory.
+  httpTimeout: "PT3S"
+  httpRetryCount: 2
