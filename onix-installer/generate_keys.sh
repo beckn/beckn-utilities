@@ -18,7 +18,7 @@ if [ $? -eq 0 ]; then
 
 else
     # Print an error message if the script failed
-    echo "${RED}Error: Key generation script failed. Please check the script output.${NC}"
+    echo "${RED}Error: Key generation script failed. Please check the script output.$${NC}"
 fi
 }
 

@@ -39,7 +39,7 @@ install_package(){
         # Amazon Linux 2
         sudo amazon-linux-extras install $1 >/dev/null 2>&1
     else
-        echo "${RED}Unsupported package manager. Please install $1 manually.${NC}"
+        echo "${RED}Unsupported package manager. Please install $1 manually.$${NC}"
         exit 1
     fi
 }
@@ -92,7 +92,7 @@ install_docker_compose() {
     if [ $? -eq 0 ]; then
         echo "Docker Compose installed successfully."
     else
-        echo "${RED}Failed to install Docker Compose. Exiting.${NC}"
+        echo "${RED}Failed to install Docker Compose. Exiting.$${NC}"
         exit 1
     fi
 
