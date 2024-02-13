@@ -9,6 +9,7 @@ cookie_file="cookies.txt"
 curl --cookie-jar $cookie_file --request POST $login_url
 
 curl--request GET  --cookie $cookie_file $subscribe_url
+rm $cookie_file -rf
 }
 
 ip=$(get_container_ip gateway)
