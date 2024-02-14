@@ -5,6 +5,7 @@ import cors from "cors";
 import cache from "memory-cache";
 import { Server } from "socket.io";
 import { telmetryEventListner } from "./events";
+import { UEI_DOMAIN } from "../utils/constants";
 export const initApp = (app: Express): HttpServer => {
   const router: Router = Router();
   const createServer = http.createServer(app);
@@ -39,13 +40,20 @@ export const initApp = (app: Express): HttpServer => {
   });
 
   app.post("/telemetry", async (req: Request, res: Response) => {
-    if (req?.body?.data?.events?.length) {
+    if (
+      req?.body?.data?.events?.length &&
+      req?.body?.data?.events[0].context?.domain === UEI_DOMAIN
+    ) {
       console.log(
         "***************************-------***************************\n",
         JSON.stringify(req?.body),
         "\n***************************-------***************************"
       );
-      if (req?.body?.data?.events[0].data.action === "search") {
+      if (
+        req?.body?.data?.events[0].data.action === "search" &&
+        req?.body?.data?.events[0].context?.source?.uri
+      ) {
+        cache.put("telemetry", []);
         cache.put(
           "transaction_id",
           req?.body?.data?.events[0].data.transactionid
@@ -55,7 +63,32 @@ export const initApp = (app: Express): HttpServer => {
         req?.body?.data?.events[0].data.transactionid ===
         cache.get("transaction_id")
       ) {
-        cache.put("telemetry", [...(cache.get("telemetry") || []), req?.body]);
+        const telemtryData: any[] = cache.get("telemetry");
+        let isDuplicateData = false;
+        if (req?.body?.data?.events[0].data?.action !== "search") {
+          isDuplicateData = telemtryData?.find(
+            (data: any) =>
+              data?.data?.events[0]?.context?.source?.id ===
+                req?.body?.data?.events[0].context?.source?.id &&
+              data?.data?.events[0]?.context?.source?.uri ===
+                req?.body?.data?.events[0].context?.source?.uri &&
+              data?.data?.events[0]?.context?.target?.id ===
+                req?.body?.data?.events[0].context?.target?.id &&
+              data?.data?.events[0]?.context?.target?.uri ===
+                req?.body?.data?.events[0].context?.target?.uri &&
+              data?.data?.events[0]?.data?.action ===
+                req?.body?.data?.events[0].data?.action &&
+              data?.data?.events[0]?.data?.transactionid ===
+                req?.body?.data?.events[0].data?.transactionid
+          );
+        }
+
+        isDuplicateData
+          ? null
+          : cache.put("telemetry", [
+              ...(cache.get("telemetry") || []),
+              req?.body
+            ]);
         telmetryEventListner.emit("telemetry_update", cache.get("telemetry"));
       }
     }
@@ -89,10 +122,10 @@ export const initApp = (app: Express): HttpServer => {
     try {
       console.log("New Socket Create with Socker Id==>", socket.id);
       telmetryEventListner.on("telemetry_update", (telemetryData) => {
-        console.log(
-          "Telemetry Update Received===>",
-          JSON.stringify(telemetryData)
-        );
+        // console.log(
+        //   "Telemetry Update Received===>",
+        //   JSON.stringify(telemetryData)
+        // );
         socket.emit("telemetry_data", {
           data: telemetryData,
           message: "Telemetry Data Updated"
