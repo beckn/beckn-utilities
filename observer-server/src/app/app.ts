@@ -44,27 +44,11 @@ export const initApp = (app: Express): HttpServer => {
       req?.body?.data?.events?.length &&
       req?.body?.data?.events[0].context?.domain === UEI_DOMAIN
     ) {
-      if (
-        (req?.body?.data?.events[0].context?.source?.id ===
-          UEI_STAKEHOLDERS.pulseBAP ||
-          req?.body?.data?.events[0].context?.source?.id ===
-            UEI_STAKEHOLDERS.pulseBPP) &&
-        (req?.body?.data?.events[0].context?.target?.id ===
-          UEI_STAKEHOLDERS.pulseBAP ||
-          req?.body?.data?.events[0].context?.target?.id ===
-            UEI_STAKEHOLDERS.pulseBPP)
-      ) {
-        // console.log(
-        //   "***************************-------***************************\n",
-        //   JSON.stringify(req?.body),
-        //   "\n***************************-------***************************"
-        // );
-      }
-      // console.log(
-      //   "***************************-------***************************\n",
-      //   JSON.stringify(req?.body),
-      //   "\n***************************-------***************************"
-      // );
+      console.log(
+        "***************************-------***************************\n",
+        JSON.stringify(req?.body),
+        "\n***************************-------***************************"
+      );
       if (
         (req?.body?.data?.events[0].data.action === "search" &&
           req?.body?.data?.events[0].context?.source?.uri) ||
@@ -79,9 +63,8 @@ export const initApp = (app: Express): HttpServer => {
         );
       }
       if (
-        req?.body?.data?.events[0].data.transactionid
-        // ===
-        // cache.get("transaction_id")
+        req?.body?.data?.events[0].data.transactionid ===
+        cache.get("transaction_id")
       ) {
         const telemtryData: any[] = cache.get("telemetry");
         let isDuplicateData = false;
