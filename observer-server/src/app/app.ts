@@ -78,7 +78,10 @@ export const initApp = (app: Express): HttpServer => {
           req?.body?.data?.events[0].data.transactionid
         );
       }
-      if (req?.body?.data?.events[0].data.transactionid) {
+      if (
+        req?.body?.data?.events[0].data.transactionid ===
+        cache.get("transaction_id")
+      ) {
         const telemtryData: any[] = cache.get("telemetry");
         let isDuplicateData = false;
         const sourceId = req?.body?.data?.events[0].context?.source?.id;
@@ -92,8 +95,11 @@ export const initApp = (app: Express): HttpServer => {
         ) {
           console.log(
             "***************************-------***************************\n",
-            req?.body?.data?.events[0].context?.source,
-            req?.body?.data?.events[0].context?.target,
+            req?.body?.data?.events[0].context?.source?.id || "Gateway",
+            " to ",
+            req?.body?.data?.events[0].context?.target?.id,
+            " for ",
+            req?.body?.data?.events[0].data?.action,
             "\n***************************-------***************************"
           );
           if (req?.body?.data?.events[0].data?.action !== "search") {
