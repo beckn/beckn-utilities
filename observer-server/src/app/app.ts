@@ -5,7 +5,7 @@ import cors from "cors";
 import cache from "memory-cache";
 import { Server } from "socket.io";
 import { telmetryEventListner } from "./events";
-import { UEI_DOMAIN } from "../utils/constants";
+import { UEI_DOMAIN, UEI_STAKEHOLDERS } from "../utils/constants";
 export const initApp = (app: Express): HttpServer => {
   const router: Router = Router();
   const createServer = http.createServer(app);
@@ -50,8 +50,11 @@ export const initApp = (app: Express): HttpServer => {
         "\n***************************-------***************************"
       );
       if (
-        req?.body?.data?.events[0].data.action === "search" &&
-        req?.body?.data?.events[0].context?.source?.uri
+        (req?.body?.data?.events[0].data.action === "search" &&
+          req?.body?.data?.events[0].context?.source?.uri) ||
+        (req?.body?.data?.events[0].context?.source?.id ===
+          UEI_STAKEHOLDERS.sheruBAP &&
+          req?.body?.data?.events[0].data.action === "init")
       ) {
         cache.put("telemetry", []);
         cache.put(
