@@ -24,7 +24,7 @@ This shell script, `start_beckn.sh`, automates the setup of Beckn services, incl
    ./start_beckn.sh
    ```
 
-   The script will guide you through the installation process.
+   The script will go with the default installation.
 
 ## Installation Sequence
 
