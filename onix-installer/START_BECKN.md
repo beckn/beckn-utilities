@@ -29,7 +29,7 @@ This shell script, `start_beckn.sh`, automates the setup of Beckn services, incl
 ## Installation Sequence
 
 1. **Install Required Packages:**
-
+   It will install Docker, Docker-Compose, and jq packages which are required for this setup.
    ```bash
    ./package_manager.sh
    ```
