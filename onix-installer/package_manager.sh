@@ -13,36 +13,57 @@ export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 
 
 #Install Package
-install_package(){
+install_package() {
     if [ -x "$(command -v apt-get)" ]; then
         # APT (Debian/Ubuntu)
-        if [ "$1" == "docker" ];then
-            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-            echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-            sudo apt update >/dev/null 2>&1
-            sudo apt install -y docker-ce docker-ce-cli containerd.io >/dev/null 2>&1
-            sudo usermod -aG docker $USER
+        if [ "$1" == "docker" ]; then
+            if ! dpkg -l | grep -q docker-ce; then
+                curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+                echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+                sudo apt update >/dev/null 2>&1
+                sudo apt install -y docker-ce docker-ce-cli containerd.io >/dev/null 2>&1
+                sudo usermod -aG docker $USER
+            else
+                echo "Docker is already installed."
+            fi
         else
-            sudo apt-get update >/dev/null 2>&1
-            sudo apt-get install -y $1 >/dev/null 2>&1
+            if ! dpkg -l | grep -q "^ii  $1 "; then
+                sudo apt-get update >/dev/null 2>&1
+                sudo apt-get install -y $1 >/dev/null 2>&1
+            else
+                echo "$1 is already installed."
+            fi
         fi
     elif [ -x "$(command -v yum)" ]; then
         # YUM (Red Hat/CentOS)
-        if [ "$1" == "docker" ];then
-            sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-            # Install Docker
-            sudo yum install -y docker-ce docker-ce-cli containerd.io >/dev/null 2>&1
+        if [ "$1" == "docker" ]; then
+            if ! rpm -qa | grep -q docker-ce; then
+                sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+                # Install Docker
+                sudo yum install -y docker-ce docker-ce-cli containerd.io >/dev/null 2>&1
+            else
+                echo "Docker is already installed."
+            fi
         else
-            sudo yum install -y $1 >/dev/null 2>&1
+            if ! rpm -qa | grep -q "^$1-"; then
+                sudo yum install -y $1 >/dev/null 2>&1
+            else
+                echo "$1 is already installed."
+            fi
         fi
     elif [ -x "$(command -v amazon-linux-extras)" ]; then
         # Amazon Linux 2
-        sudo amazon-linux-extras install $1 >/dev/null 2>&1
+        if ! amazon-linux-extras list | grep -q "^$1 "; then
+            sudo amazon-linux-extras install $1 >/dev/null 2>&1
+        else
+            echo "$1 is already installed."
+        fi
     else
-        echo "${RED}Unsupported package manager. Please install $1 manually.$${NC}"
+        echo "${RED}Unsupported package manager. Please install $1 manually.${NC}"
         exit 1
     fi
 }
+
 
 remove_package(){
     if [ -x "$(command -v apt-get)" ]; then

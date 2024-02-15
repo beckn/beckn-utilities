@@ -71,11 +71,11 @@ sleep 10
 echo "Protocol server BPP installation successful"
 
 echo "Please find below details of protocol server"
-# echo "BAP_SUBSCRIBER_ID: $bap_subscriber_id"
-# echo "BAP_SUBSCRIBER_ID_KEY: $bap_subscriber_id_key"
-# echo "BAP_SUBSCRIBER_URL: $bap_subscriber_url"
+echo BAP_SUBSCRIBER_ID: $bap_subscriber_id
+echo BAP_SUBSCRIBER_ID_KEY: $bap_subscriber_id_key
+echo BAP_SUBSCRIBER_URL: $bap_subscriber_url
 
 
-# echo "BPP_SUBSCRIBER_ID: $bpp_subscriber_id"
-# echo "BPP_SUBSCRIBER_ID_KEY: $bpp_subscriber_id_key"
-# echo "BPP_SUBSCRIBER_URL: $bpp_subscriber_url"
+echo BPP_SUBSCRIBER_ID: $bpp_subscriber_id
+echo BPP_SUBSCRIBER_ID_KEY: $bpp_subscriber_id_key
+echo BPP_SUBSCRIBER_URL: $bpp_subscriber_url

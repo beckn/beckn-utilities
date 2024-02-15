@@ -62,8 +62,6 @@ services:
     depends_on:
       - registry
       - gateway
-      - bpp-network
-      - bpp-client
     container_name: sandbox-api
     networks:
       - beckn_network
