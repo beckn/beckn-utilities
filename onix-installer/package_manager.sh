@@ -4,7 +4,7 @@ source variables.sh
 package_list=("docker" "docker-compose" "jq")
 
 command_exists() {
-  command -v "$1" >/dev/null 2>&1
+  command -v "$1"  &>/dev/null
 }
 
 # Redirect input from /dev/null to silence prompts
@@ -17,12 +17,20 @@ install_package() {
     if [ -x "$(command -v apt-get)" ]; then
         # APT (Debian/Ubuntu)
         if [ "$1" == "docker" ]; then
-            if ! dpkg -l | grep -q docker-ce; then
+            check=$(command_exists docker)
+            if ! check; then
+                echo "Docker"
                 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
                 echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
                 sudo apt update >/dev/null 2>&1
                 sudo apt install -y docker-ce docker-ce-cli containerd.io >/dev/null 2>&1
                 sudo usermod -aG docker $USER
+                command_exists docker
+                if [ $? -eq 0 ]; then
+                    sleep 10
+                    sudo systemctl enable docker.service
+                    sudo systemctl restart docker.service
+                fi
             else
                 echo "Docker is already installed."
             fi
@@ -79,22 +87,9 @@ remove_package(){
 
 # Function to install Docker
 install_docker_bash() {
-    # Check if Docker install
-    command_exists docker
-    if [ $? -eq 0 ]; then
-        sleep 10
-        sudo systemctl enable docker.service
-        sudo systemctl restart docker.service
-    fi
-
     # Install Docker Bash completion
-    if [ -f /etc/bash_completion.d/docker ]; then
-        echo "Docker Bash completion is already installed."
-    else
-        # Install Docker Bash completion
         echo "Installing Docker Bash completion..."
         sudo curl -L https://raw.githubusercontent.com/docker/cli/master/contrib/completion/bash/docker -o /etc/bash_completion.d/docker
-    fi
 }
 
 # Function to install Docker Compose
@@ -134,7 +129,12 @@ for package in "${package_list[@]}"; do
         install_package "$package"
     fi
     if [ "$package" == "docker" ]; then
-        install_docker_bash
+        if [ -f /etc/bash_completion.d/docker ]; then
+            echo "Docker Bash completion is already installed."
+        else
+            echo "package"
+            install_docker_bash
+        fi
     fi
     if [ "$package" == "docker-compose" ]; then
         install_docker_compose

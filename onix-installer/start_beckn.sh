@@ -1,5 +1,6 @@
 #!/bin/bash
 source variables.sh
+source get_container_details.sh
 
 #below function will start specifice service inside docker-compose file
 start_container(){
@@ -70,12 +71,16 @@ start_container "bpp-network"
 sleep 10
 echo "Protocol server BPP installation successful"
 
-echo "Please find below details of protocol server"
-echo BAP_SUBSCRIBER_ID: $bap_subscriber_id
-echo BAP_SUBSCRIBER_ID_KEY: $bap_subscriber_id_key
-echo BAP_SUBSCRIBER_URL: $bap_subscriber_url
+bap_network_ip=$(get_container_ip bap-network)
+bap_client_ip=$(get_container_ip bap-client)
+bpp_network_ip=$(get_container_ip bpp-network)
+bap_network_ip=$(get_container_ip bpp-client)
 
-
-echo BPP_SUBSCRIBER_ID: $bpp_subscriber_id
-echo BPP_SUBSCRIBER_ID_KEY: $bpp_subscriber_id_key
-echo BPP_SUBSCRIBER_URL: $bpp_subscriber_url
+echo " "
+echo "##########################################################"
+echo "${GREEN}Please find below details of protocol server which required in postman collection${NC}"
+echo "BASE_URL=http://$bap_client_ip:$bap_client_port/"
+echo "BAP_ID=$bap_subscriber_id"
+echo "BAP_URI=http://$bap_network_ip:$bap_network_port/"
+echo "BPP_ID=$bpp_subscriber_id"
+echo "BPP_URI=http://$bpp_network_ip:$bpp_network_port/"
