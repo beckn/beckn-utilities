@@ -101,6 +101,8 @@ export const initApp = (app: Express): HttpServer => {
             req?.body?.data?.events[0].context?.target?.id,
             " for ",
             req?.body?.data?.events[0].data?.action,
+            " and transaction_id ",
+            req?.body?.data?.events[0].data?.transactionid,
             "\n***************************-------***************************"
           );
           if (req?.body?.data?.events[0].data?.action !== "search") {
