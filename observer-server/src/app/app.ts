@@ -113,15 +113,14 @@ export const initApp = (app: Express): HttpServer => {
                   req?.body?.data?.events[0].data?.transactionid
             );
           }
+          isDuplicateData
+            ? null
+            : cache.put("telemetry", [
+                ...(cache.get("telemetry") || []),
+                req?.body
+              ]);
+          telmetryEventListner.emit("telemetry_update", cache.get("telemetry"));
         }
-
-        isDuplicateData
-          ? null
-          : cache.put("telemetry", [
-              ...(cache.get("telemetry") || []),
-              req?.body
-            ]);
-        telmetryEventListner.emit("telemetry_update", cache.get("telemetry"));
       }
     }
 
