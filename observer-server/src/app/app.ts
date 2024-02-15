@@ -62,10 +62,7 @@ export const initApp = (app: Express): HttpServer => {
           req?.body?.data?.events[0].data.transactionid
         );
       }
-      if (
-        req?.body?.data?.events[0].data.transactionid ===
-        cache.get("transaction_id")
-      ) {
+      if (req?.body?.data?.events[0].data.transactionid) {
         const telemtryData: any[] = cache.get("telemetry");
         let isDuplicateData = false;
         const sourceId = req?.body?.data?.events[0].context?.source?.id;
