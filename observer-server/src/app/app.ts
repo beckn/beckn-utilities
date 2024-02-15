@@ -68,22 +68,32 @@ export const initApp = (app: Express): HttpServer => {
       ) {
         const telemtryData: any[] = cache.get("telemetry");
         let isDuplicateData = false;
-        if (req?.body?.data?.events[0].data?.action !== "search") {
-          isDuplicateData = telemtryData?.find(
-            (data: any) =>
-              data?.data?.events[0]?.context?.source?.id ===
-                req?.body?.data?.events[0].context?.source?.id &&
-              data?.data?.events[0]?.context?.source?.uri ===
-                req?.body?.data?.events[0].context?.source?.uri &&
-              data?.data?.events[0]?.context?.target?.id ===
-                req?.body?.data?.events[0].context?.target?.id &&
-              data?.data?.events[0]?.context?.target?.uri ===
-                req?.body?.data?.events[0].context?.target?.uri &&
-              data?.data?.events[0]?.data?.action ===
-                req?.body?.data?.events[0].data?.action &&
-              data?.data?.events[0]?.data?.transactionid ===
-                req?.body?.data?.events[0].data?.transactionid
-          );
+        const sourceId = req?.body?.data?.events[0].context?.source?.id;
+        const targetId = req?.body?.data?.events[0].context?.target?.id;
+
+        if (
+          (Object.values(UEI_STAKEHOLDERS).includes(sourceId) &&
+            (!targetId ||
+              Object.values(UEI_STAKEHOLDERS).includes(targetId))) ||
+          (!sourceId && Object.values(UEI_STAKEHOLDERS).includes(targetId))
+        ) {
+          if (req?.body?.data?.events[0].data?.action !== "search") {
+            isDuplicateData = telemtryData?.find(
+              (data: any) =>
+                data?.data?.events[0]?.context?.source?.id ===
+                  req?.body?.data?.events[0].context?.source?.id &&
+                data?.data?.events[0]?.context?.source?.uri ===
+                  req?.body?.data?.events[0].context?.source?.uri &&
+                data?.data?.events[0]?.context?.target?.id ===
+                  req?.body?.data?.events[0].context?.target?.id &&
+                data?.data?.events[0]?.context?.target?.uri ===
+                  req?.body?.data?.events[0].context?.target?.uri &&
+                data?.data?.events[0]?.data?.action ===
+                  req?.body?.data?.events[0].data?.action &&
+                data?.data?.events[0]?.data?.transactionid ===
+                  req?.body?.data?.events[0].data?.transactionid
+            );
+          }
         }
 
         isDuplicateData
