@@ -54,11 +54,11 @@ export const initApp = (app: Express): HttpServer => {
           req?.body?.data?.events[0].context?.target?.id ===
             UEI_STAKEHOLDERS.pulseBPP)
       ) {
-        console.log(
-          "***************************-------***************************\n",
-          JSON.stringify(req?.body),
-          "\n***************************-------***************************"
-        );
+        // console.log(
+        //   "***************************-------***************************\n",
+        //   JSON.stringify(req?.body),
+        //   "\n***************************-------***************************"
+        // );
       }
       // console.log(
       //   "***************************-------***************************\n",
@@ -90,6 +90,12 @@ export const initApp = (app: Express): HttpServer => {
               Object.values(UEI_STAKEHOLDERS).includes(targetId))) ||
           (!sourceId && Object.values(UEI_STAKEHOLDERS).includes(targetId))
         ) {
+          console.log(
+            "***************************-------***************************\n",
+            req?.body?.data?.events[0].context?.source,
+            req?.body?.data?.events[0].context?.target,
+            "\n***************************-------***************************"
+          );
           if (req?.body?.data?.events[0].data?.action !== "search") {
             isDuplicateData = telemtryData?.find(
               (data: any) =>
