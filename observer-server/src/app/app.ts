@@ -44,11 +44,11 @@ export const initApp = (app: Express): HttpServer => {
       req?.body?.data?.events?.length &&
       req?.body?.data?.events[0].context?.domain === UEI_DOMAIN
     ) {
-      console.log(
-        "***************************-------***************************\n",
-        JSON.stringify(req?.body),
-        "\n***************************-------***************************"
-      );
+      // console.log(
+      //   "***************************-------***************************\n",
+      //   JSON.stringify(req?.body),
+      //   "\n***************************-------***************************"
+      // );
       if (
         (req?.body?.data?.events[0].data.action === "search" &&
           req?.body?.data?.events[0].context?.source?.uri) ||
