@@ -25,6 +25,7 @@ install_package() {
                 sudo apt update >/dev/null 2>&1
                 sudo apt install -y docker-ce docker-ce-cli containerd.io >/dev/null 2>&1
                 sudo usermod -aG docker $USER
+                newgrp docker
                 command_exists docker
                 if [ $? -eq 0 ]; then
                     sleep 10
