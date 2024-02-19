@@ -13,4 +13,4 @@ rm $cookie_file -rf
 }
 
 ip=$(get_container_ip gateway)
-register_gw $ip
+register_gw $ip 

@@ -8,8 +8,11 @@ source get_container_details.sh
 
 newClientFile=$(echo "$bppClientFile" | sed 's/yaml-sample/yml/')
 newNetworkFile=$(echo "$bppNetworkFile" | sed 's/yaml-sample/yml/')
+
 cp $bppClientFile $newClientFile
 cp $bppNetworkFile $newNetworkFile
+
+echo "$newClientFile $newNetworkFile"
 
 clientFile=$newClientFile
 networkFile=$newNetworkFile
@@ -21,6 +24,7 @@ sed -i "s|BPP_NETWORK_PORT|$network_port|" $networkFile
 sed -i "s|BPP_CLIENT_PORT|$client_port|" $clientFile
 
 registry_url="http://$(get_container_ip registry):3030/subscribers"
+echo "$registry_url"
 
 echo "Generating public/private key pair"
 get_keys

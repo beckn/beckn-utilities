@@ -109,7 +109,7 @@ install_docker_compose() {
     if [ $? -eq 0 ]; then
         echo "Docker Compose installed successfully."
     else
-        echo "${RED}Failed to install Docker Compose. Exiting.$${NC}"
+        echo "${RED}Failed to install Docker Compose. Exiting.${NC}"
         exit 1
     fi
 

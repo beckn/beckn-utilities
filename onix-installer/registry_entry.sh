@@ -19,7 +19,7 @@ create_network_participant() {
         "subscriber_id": "$subscriber_id",
         "pub_key_id": "$pub_key_id",
         "subscriber_url": "$subscriber_url",
-        "domain": "",
+        "domain": " ",
         "encr_public_key": "$encr_public_key",
         "signing_public_key": "$signing_public_key",
         "valid_from": "$valid_from",
@@ -37,8 +37,8 @@ EOF
     
     if [ $? -eq 0 ]; then
         
-        echo "${GREEN}Network Participant Entry is created. Please login to registry and subscribe you Network Participant.$${NC}"
+        echo "${GREEN}Network Participant Entry is created. Please login to registry and subscribe you Network Participant.${NC}"
     else
-        echo "${RED}Error: $response$${NC}"
+        echo "${RED}Error: $response${NC}"
     fi
 }

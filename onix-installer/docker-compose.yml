@@ -66,10 +66,8 @@ services:
     networks:
       - beckn_network
     ports:
-      - 3001:3000
+      - 4010:4000
     restart: unless-stopped
-    volumes:
-      - ./ENV/.env-webhook:/usr/src/app/.env
 
   sandbox-webhook:
     image: fidedocker/sandbox-webhook-api

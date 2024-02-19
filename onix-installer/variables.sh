@@ -19,10 +19,10 @@ rabbitmqUrl="rabbitmq"
 
 redisUrl="redis"
 
-registry_url="https://registry:3030/subscribers"
+registry_url="http://registry:3030/subscribers"
 
-public_key="KKHOpMKQCbJHzjme+CPKI3HQxIhzKMpcLLRGMhzf7rk="
-private_key="W7HkCMPWvxv6/jWqHlyUI4vWX8704+rN3kCwBGIA7rcooc6kwpAJskfOOZ74I8ojcdDEiHMoylwstEYyHN/uuQ=="
+#public_key="KKHOpMKQCbJHzjme+CPKI3HQxIhzKMpcLLRGMhzf7rk="
+#private_key="W7HkCMPWvxv6/jWqHlyUI4vWX8704+rN3kCwBGIA7rcooc6kwpAJskfOOZ74I8ojcdDEiHMoylwstEYyHN/uuQ=="
 
 #BAP varibales. 
 
@@ -47,5 +47,5 @@ bpp_network_port=6002
 
 bpp_subscriber_id="bpp-network"
 bpp_subscriber_id_key="bpp-network-key"
-bpp_subscriber_url="http://bpp-network:5002"
+bpp_subscriber_url="http://bpp-network:6002"
 webhook_url="http://sandbox-webhook:3005"
