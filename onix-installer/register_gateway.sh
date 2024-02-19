@@ -8,7 +8,7 @@ cookie_file="cookies.txt"
 # Step 1: Perform login and save the session cookies to a file
 curl --cookie-jar $cookie_file --request POST $login_url
 
-curl--request GET  --cookie $cookie_file $subscribe_url
+curl --request GET  --cookie $cookie_file $subscribe_url
 rm $cookie_file -rf
 }
 
