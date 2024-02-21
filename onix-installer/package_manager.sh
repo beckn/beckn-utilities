@@ -132,7 +132,6 @@ for package in "${package_list[@]}"; do
         if [ -f /etc/bash_completion.d/docker ]; then
             echo "Docker Bash completion is already installed."
         else
-            echo "package"
             install_docker_bash
         fi
     fi
