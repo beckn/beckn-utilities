@@ -3,6 +3,12 @@ source variables.sh
 source get_container_details.sh
 
 # Function to start a specific service inside docker-compose file
+install_package(){
+    echo "${GREEN}................Installing required packages................${NC}"
+    ./package_manager.sh
+    echo "Package Installation is done"
+
+}
 start_container(){
     #ignore orphaned containers warning
     export COMPOSE_IGNORE_ORPHANS=1
@@ -45,15 +51,6 @@ install_gateway_and_registry(){
 # Function to install BAP Protocol Server
 install_bap_protocol_server(){
     start_support_services
-    echo "${GREEN}................Installing Protocol Server for BAP................${NC}"
-    
-    read -p "Enter BAP Subscriber ID: " bap_subscriber_id
-    read -p "Enter BAP Subscriber URL: " bap_subscriber_url
-    # Ask the user if they want to change the registry_url
-    read -p "Do you want to change the registry_url? (${GREEN}Press Enter to accept default: $beckn_registry_url${NC}): " custom_registry_url
-    registry_url=${custom_registry_url:-$beckn_registry_url}
-    bap_subscriber_id_key=$bap_subscriber_id-key
-
     ./update_bap_config.sh
 
     sleep 10
@@ -76,13 +73,6 @@ install_bpp_protocol_server_with_sandbox(){
     echo "Webhook installation successful"
 
     echo "${GREEN}................Installing Protocol Server for BPP................${NC}"
-    
-    read -p "Enter BPP Subscriber ID: " bpp_subscriber_id
-    read -p "Enter BPP Subscriber URL: " bpp_subscriber_url
-    # Ask the user if they want to change the registry_url
-    read -p "Do you want to change the registry_url? (${GREEN}Press Enter to accept default: $beckn_registry_url${NC}): " custom_registry_url
-    registry_url=${custom_registry_url:-$beckn_registry_url}
-    bpp_subscriber_id_key=$bpp_subscriber_id-key
 
     ./update_bpp_config.sh
 
@@ -98,15 +88,6 @@ install_bpp_protocol_server(){
     
     echo "${GREEN}................Installing Protocol Server for BPP................${NC}"
     
-    read -p "Enter BPP Subscriber ID: " bpp_subscriber_id
-    read -p "Enter BPP Subscriber URL: " bpp_subscriber_url
-    read -p "Enter Webhook URL: " webhook_url
-    
-    # Ask the user if they want to change the registry_url
-    read -p "Do you want to change the registry_url? (${GREEN}Press Enter to accept default: $beckn_registry_url${NC}): " custom_registry_url
-    registry_url=${custom_registry_url:-$beckn_registry_url}
-    bpp_subscriber_id_key=$bpp_subscriber_id-key
-
     ./update_bpp_config.sh
 
     sleep 10
@@ -123,6 +104,7 @@ read -p "Do you want to install all the components on the local system? (Y/n): "
 
 if [[ $install_all =~ ^[Yy]$ ]]; then
     # Install and bring up everything
+    install_package
     install_gateway_and_registry
     start_support_services
     install_bap_protocol_server
@@ -140,15 +122,41 @@ else
 
     case $user_choice in
         1)
+            install_package
             install_gateway_and_registry
             ;;
         2)
+            echo "${GREEN}................Installing Protocol Server for BAP................${NC}"
+            
+            read -p "Enter BAP Subscriber ID: " bap_subscriber_id
+            read -p "Enter BAP Subscriber URL: " bap_subscriber_url
+            # Ask the user if they want to change the registry_url
+            read -p "Do you want to change the registry_url? (${GREEN}Press Enter to accept default: $beckn_registry_url${NC}): " custom_registry_url
+            registry_url=${custom_registry_url:-$beckn_registry_url}
+            bap_subscriber_id_key=$bap_subscriber_id-key
+            install_package
             install_bap_protocol_server
             ;;
         3)
+            read -p "Enter BPP Subscriber ID: " bpp_subscriber_id
+            read -p "Enter BPP Subscriber URL: " bpp_subscriber_url
+            # Ask the user if they want to change the registry_url
+            read -p "Do you want to change the registry_url? (${GREEN}Press Enter to accept default: $beckn_registry_url${NC}): " custom_registry_url
+            registry_url=${custom_registry_url:-$beckn_registry_url}
+            bpp_subscriber_id_key=$bpp_subscriber_id-key
+            install_package
             install_bpp_protocol_server_with_sandbox
             ;;
         4)
+            read -p "Enter BPP Subscriber ID: " bpp_subscriber_id
+            read -p "Enter BPP Subscriber URL: " bpp_subscriber_url
+            read -p "Enter Webhook URL: " webhook_url
+            
+            # Ask the user if they want to change the registry_url
+            read -p "Do you want to change the registry_url? (${GREEN}Press Enter to accept default: $beckn_registry_url${NC}): " custom_registry_url
+            registry_url=${custom_registry_url:-$beckn_registry_url}
+            bpp_subscriber_id_key=$bpp_subscriber_id-key
+            install_package
             install_bpp_protocol_server
             ;;
         5)
