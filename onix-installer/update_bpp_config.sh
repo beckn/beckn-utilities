@@ -12,8 +12,6 @@ newNetworkFile=$(echo "$bppNetworkFile" | sed 's/yaml-sample/yml/')
 cp $bppClientFile $newClientFile
 cp $bppNetworkFile $newNetworkFile
 
-echo "$newClientFile $newNetworkFile"
-
 clientFile=$newClientFile
 networkFile=$newNetworkFile
 
