@@ -20,6 +20,7 @@ rabbitmqUrl="rabbitmq"
 redisUrl="redis"
 
 registry_url="http://registry:3030/subscribers"
+beckn_registry_url="https://registry.becknprotocol.io/subscribers"
 
 #public_key="KKHOpMKQCbJHzjme+CPKI3HQxIhzKMpcLLRGMhzf7rk="
 #private_key="W7HkCMPWvxv6/jWqHlyUI4vWX8704+rN3kCwBGIA7rcooc6kwpAJskfOOZ74I8ojcdDEiHMoylwstEYyHN/uuQ=="
