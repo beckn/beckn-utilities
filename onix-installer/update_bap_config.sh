@@ -24,6 +24,9 @@ sed -i "s|BAP_CLIENT_PORT|$client_port|" $clientFile
 
 if [[ $1 ]]; then
     registry_url=$1
+    bap_subscriber_id=$2
+    bap_subscriber_id_key=$3
+    bap_subscriber_url=$4
 else
     registry_url="http://$(get_container_ip registry):3030/subscribers"
 fi

@@ -23,6 +23,9 @@ sed -i "s|BPP_CLIENT_PORT|$client_port|" $clientFile
 
 if [[ $1 ]]; then
     registry_url=$1
+    bpp_subscriber_id=$2
+    bpp_subscriber_id_key=$3
+    bpp_subscriber_url=$4
 else
     registry_url="http://$(get_container_ip registry):3030/subscribers"
 fi

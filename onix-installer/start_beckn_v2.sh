@@ -52,7 +52,11 @@ install_gateway_and_registry(){
 install_bap_protocol_server(){
     start_support_services
     if [[ $1 ]];then
-        ./update_bap_config.sh $1
+        registry_url=$1
+        bap_subscriber_id=$2
+        bap_subscriber_id_key=$3
+        bap_subscriber_url=$4
+        ./update_bap_config.sh $registry_url $bap_subscriber_id $bap_subscriber_id_key $bap_subscriber_url
     else
         ./update_bap_config
     fi
@@ -76,9 +80,13 @@ install_bpp_protocol_server_with_sandbox(){
     echo "Webhook installation successful"
 
     echo "${GREEN}................Installing Protocol Server for BPP................${NC}"
-    
+
     if [[ $1 ]];then
-        ./update_bpp_config.sh $1
+        registry_url=$1
+        bpp_subscriber_id=$2
+        bpp_subscriber_id_key=$3
+        bpp_subscriber_url=$4
+        ./update_bpp_config.sh $registry_url $bpp_subscriber_id $bpp_subscriber_id_key $bpp_subscriber_url
     else
         ./update_bpp_config.sh
     fi
@@ -96,7 +104,12 @@ install_bpp_protocol_server(){
     echo "${GREEN}................Installing Protocol Server for BPP................${NC}"
     
     if [[ $1 ]];then
-        ./update_bpp_config.sh $1
+        registry_url=$1
+        bpp_subscriber_id=$2
+        bpp_subscriber_id_key=$3
+        bpp_subscriber_url=$4
+        webhook_url=$5
+        ./update_bpp_config.sh $registry_url $bpp_subscriber_id $bpp_subscriber_id_key $bpp_subscriber_url $$webhook_url
     else
         ./update_bpp_config.sh
     fi
@@ -146,7 +159,7 @@ else
             registry_url=${custom_registry_url:-$beckn_registry_url}
             bap_subscriber_id_key=$bap_subscriber_id-key
             install_package
-            install_bap_protocol_server $registry_url
+            install_bap_protocol_server $registry_url $bap_subscriber_id $bap_subscriber_id_key $bap_subscriber_url
             ;;
         3)
             read -p "Enter BPP Subscriber ID: " bpp_subscriber_id
@@ -156,7 +169,7 @@ else
             registry_url=${custom_registry_url:-$beckn_registry_url}
             bpp_subscriber_id_key=$bpp_subscriber_id-key
             install_package
-            install_bpp_protocol_server_with_sandbox $registry_url
+            install_bpp_protocol_server_with_sandbox $registry_url $bpp_subscriber_id $bpp_subscriber_id_key $bpp_subscriber_url
             ;;
         4)
             read -p "Enter BPP Subscriber ID: " bpp_subscriber_id
@@ -168,7 +181,7 @@ else
             registry_url=${custom_registry_url:-$beckn_registry_url}
             bpp_subscriber_id_key=$bpp_subscriber_id-key
             install_package
-            install_bpp_protocol_server $registry_url
+            install_bpp_protocol_server $registry_url $bpp_subscriber_id $bpp_subscriber_id_key $bpp_subscriber_url $webhook_url
             ;;
         5)
             echo "Exiting ONIX Installer"
