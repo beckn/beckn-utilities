@@ -21,8 +21,11 @@ network_port=$bpp_network_port
 sed -i "s|BPP_NETWORK_PORT|$network_port|" $networkFile
 sed -i "s|BPP_CLIENT_PORT|$client_port|" $clientFile
 
-registry_url="http://$(get_container_ip registry):3030/subscribers"
-echo "$registry_url"
+if [[ $1 ]]; then
+    registry_url=$1
+else
+    registry_url="http://$(get_container_ip registry):3030/subscribers"
+fi
 
 echo "Generating public/private key pair"
 get_keys

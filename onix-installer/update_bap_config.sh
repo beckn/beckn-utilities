@@ -22,7 +22,11 @@ network_port=$bap_network_port
 sed -i "s|BAP_NETWORK_PORT|$network_port|" $networkFile
 sed -i "s|BAP_CLIENT_PORT|$client_port|" $clientFile
 
-registry_url="http://$(get_container_ip registry):3030/subscribers"
+if [[ $1 ]]; then
+    registry_url=$1
+else
+    registry_url="http://$(get_container_ip registry):3030/subscribers"
+fi
 
 echo "Generating public/private key pair"
 get_keys
@@ -60,6 +64,6 @@ for file in "$clientFile" "$networkFile"; do
     done
 done
 
-echo "Registering BPP protocol server on the registry"
+echo "Registering BAP protocol server on the registry"
 
 create_network_participant "$registry_url" "application/json" "$bap_subscriber_id" "$bap_subscriber_id_key" "$bap_subscriber_url" "$public_key" "$public_key" "$valid_from" "$valid_until" "$type"

@@ -37,7 +37,7 @@ EOF
     
     if [ $? -eq 0 ]; then
         
-        echo "${GREEN}Network Participant Entry is created. Please login to registry and subscribe you Network Participant.${NC}"
+        echo "${GREEN}Network Participant Entry is created. Please login to registry $registry_url and subscribe you Network Participant.${NC}"
     else
         echo "${RED}Error: $response${NC}"
     fi

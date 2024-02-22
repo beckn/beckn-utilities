@@ -51,8 +51,11 @@ install_gateway_and_registry(){
 # Function to install BAP Protocol Server
 install_bap_protocol_server(){
     start_support_services
-    ./update_bap_config.sh
-
+    if [[ $1 ]];then
+        ./update_bap_config.sh $1
+    else
+        ./update_bap_config
+    fi
     sleep 10
     start_container "bap-client"
     start_container "bap-network"
@@ -73,8 +76,12 @@ install_bpp_protocol_server_with_sandbox(){
     echo "Webhook installation successful"
 
     echo "${GREEN}................Installing Protocol Server for BPP................${NC}"
-
-    ./update_bpp_config.sh
+    
+    if [[ $1 ]];then
+        ./update_bpp_config.sh $1
+    else
+        ./update_bpp_config.sh
+    fi
 
     sleep 10
     start_container "bpp-client"
@@ -88,7 +95,11 @@ install_bpp_protocol_server(){
     
     echo "${GREEN}................Installing Protocol Server for BPP................${NC}"
     
-    ./update_bpp_config.sh
+    if [[ $1 ]];then
+        ./update_bpp_config.sh $1
+    else
+        ./update_bpp_config.sh
+    fi
 
     sleep 10
     start_container "bpp-client"
@@ -135,7 +146,7 @@ else
             registry_url=${custom_registry_url:-$beckn_registry_url}
             bap_subscriber_id_key=$bap_subscriber_id-key
             install_package
-            install_bap_protocol_server
+            install_bap_protocol_server $registry_url
             ;;
         3)
             read -p "Enter BPP Subscriber ID: " bpp_subscriber_id
@@ -145,7 +156,7 @@ else
             registry_url=${custom_registry_url:-$beckn_registry_url}
             bpp_subscriber_id_key=$bpp_subscriber_id-key
             install_package
-            install_bpp_protocol_server_with_sandbox
+            install_bpp_protocol_server_with_sandbox $registry_url
             ;;
         4)
             read -p "Enter BPP Subscriber ID: " bpp_subscriber_id
@@ -157,7 +168,7 @@ else
             registry_url=${custom_registry_url:-$beckn_registry_url}
             bpp_subscriber_id_key=$bpp_subscriber_id-key
             install_package
-            install_bpp_protocol_server
+            install_bpp_protocol_server $registry_url
             ;;
         5)
             echo "Exiting ONIX Installer"
