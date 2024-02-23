@@ -53,6 +53,7 @@ install_package() {
                 sudo systemctl start docker.service
                 sudo usermod -aG docker $USER
                 newgrp docker
+                echo "Press Ctrl+d to continue"
             else
                 echo "Docker is already installed."
             fi
