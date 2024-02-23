@@ -25,7 +25,11 @@ export enum StatusEnum {
   PACKAGING_AND_SHIPPING_PREPARATION = 10
 }
 
-interface IMachineOrder {
+interface DocResult<T> {
+  _doc: T;
+}
+
+interface IMachineOrder extends DocResult<IMachineOrder> {
   order_id: string;
   current_update: string;
   last_update: string;

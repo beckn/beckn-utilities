@@ -13,20 +13,37 @@ export const confirmController = async (req: Request, res: Response) => {
     if (!_.isEmpty(confirmOrderResponse) && confirmOrderResponse.order_id) {
       initiateMachineProcess(confirmOrderResponse?.order_id);
       return res.status(201).json({
-        order_id: confirmOrderResponse?.order_id,
+        success: false,
         message: "Order Created",
+        order_id: confirmOrderResponse?.order_id
       });
     }
-  } catch (error) {
+    return res.status(200).json({
+      success: false,
+      message: "Order Not Created"
+    });
+  } catch (error: any) {
     console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
 export const getController = async (req: Request, res: Response) => {
   try {
     const getOrderResponse = await getOrderService(req?.body?.order_id);
-    return res.status(200).json(getOrderResponse);
-  } catch (error) {
+    return res.status(200).json({
+      message: "Order Retrieved",
+      data: getOrderResponse,
+      success: true
+    });
+  } catch (error: any) {
     console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
