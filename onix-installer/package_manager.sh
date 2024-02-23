@@ -48,7 +48,11 @@ install_package() {
             if ! rpm -qa | grep -q docker-ce; then
                 sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
                 # Install Docker
-                sudo yum install -y docker-ce docker-ce-cli containerd.io >/dev/null 2>&1
+                sudo yum install -y docker >/dev/null 2>&1
+                sudo systemctl enable docker.service
+                sudo systemctl start docker.service
+                sudo usermod -aG docker $USER
+                newgrp docker
             else
                 echo "Docker is already installed."
             fi
