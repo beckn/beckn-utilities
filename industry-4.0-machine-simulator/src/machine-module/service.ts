@@ -10,7 +10,7 @@ export const createOrderService = async (
     order_specification,
     last_update: "",
     current_update: Date(),
-    status: StatusEnum.COMPONENT_INSPECTION
+    status: StatusEnum.ASSEMBLY_PROCESS_STARTED,
   });
 };
 
@@ -18,28 +18,28 @@ export const updateOrderService = async (order_id: string) => {
   try {
     const orderDetails = await MachineOrderModel.findOne({ order_id });
     if (
-      orderDetails?.status === StatusEnum.PACKAGING_AND_SHIPPING_PREPARATION
+      orderDetails?.status === StatusEnum.THE_ORDER_IS_SUCCESSFULLY_COMPLETED
     ) {
       return {
-        message: "Last_Stage"
+        message: "Last_Stage",
       };
     }
 
     if (orderDetails) {
       await MachineOrderModel.updateOne(
         {
-          order_id: orderDetails?.order_id
+          order_id: orderDetails?.order_id,
         },
         {
           $set: {
             current_update: Date(),
             last_update: orderDetails.current_update,
-            status: orderDetails?.status + 1
-          }
+            status: orderDetails.status + 1,
+          },
         }
       );
       return {
-        message: "Status_Updated"
+        message: "Status_Updated",
       };
     }
   } catch (error: any) {
@@ -53,12 +53,12 @@ export const getOrderService = async (order_id: string) => {
     if (!_.isEmpty(getOrderDetails)) {
       const result = {
         ...getOrderDetails?._doc,
-        status: StatusChart[getOrderDetails.status]
+        status: StatusChart[getOrderDetails.status],
       };
       return result;
     }
     return {
-      message: "Order not found"
+      message: "Order not found",
     };
   } catch (error: any) {
     console.log(error);
