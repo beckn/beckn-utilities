@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import _ from "lodash";
 import { createOrderService, getOrderService } from "./service";
 import { initiateMachineProcess } from "./utils";
+import { StatusChart } from "./model";
 
 export const confirmController = async (req: Request, res: Response) => {
   try {
@@ -17,19 +18,19 @@ export const confirmController = async (req: Request, res: Response) => {
         message: "Order Created",
         order_details: {
           order_id: confirmOrderResponse?.order_id,
-          order_status: confirmOrderResponse?.status
-        }
+          order_status: StatusChart[confirmOrderResponse.status],
+        },
       });
     }
     return res.status(200).json({
       success: false,
-      message: "Order Not Created"
+      message: "Order Not Created",
     });
   } catch (error: any) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -40,13 +41,13 @@ export const getController = async (req: Request, res: Response) => {
     return res.status(200).json({
       message: "Order Retrieved",
       data: getOrderResponse,
-      success: true
+      success: true,
     });
   } catch (error: any) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
