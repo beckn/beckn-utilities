@@ -13,7 +13,7 @@ export const confirmController = async (req: Request, res: Response) => {
     if (!_.isEmpty(confirmOrderResponse) && confirmOrderResponse.order_id) {
       initiateMachineProcess(confirmOrderResponse?.order_id);
       return res.status(201).json({
-        success: false,
+        success: true,
         message: "Order Created",
         order_id: confirmOrderResponse?.order_id
       });
