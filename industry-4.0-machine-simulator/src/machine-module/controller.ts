@@ -15,7 +15,10 @@ export const confirmController = async (req: Request, res: Response) => {
       return res.status(201).json({
         success: true,
         message: "Order Created",
-        order_id: confirmOrderResponse?.order_id
+        order_details: {
+          order_id: confirmOrderResponse?.order_id,
+          order_status: confirmOrderResponse?.status
+        }
       });
     }
     return res.status(200).json({
