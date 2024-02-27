@@ -16,6 +16,3 @@ Welcome to the Beckn Utilities repository! This repository houses multiple utili
 Each utility has its own set of instructions for installation, configuration, and usage. Please refer to the documentation links provided above for detailed information on how to use each utility.
 
 
-## License
-
-This repository is licensed under the [MIT License](LICENSE). Please make sure to review and comply with the license terms before using or contributing to this repository.
