@@ -9,7 +9,7 @@ Welcome to the Beckn Utilities repository! This repository houses multiple utili
 | Beckn Spec Validator          | v1.0.0  | Added support for new validation rules.   | [Documentation](https://github.com/beckn/beckn-utilities/tree/main/beckn-spec-validator)           |
 | Industry 4.0 Machine Simulator| v1.0.0  | Fixed bugs related to simulation accuracy.| [Documentation](https://github.com/beckn/beckn-utilities/tree/main/industry-4.0-machine-simulator) |
 | Observer Server               | v1.0.0  | Improved performance and added new APIs.  | [Documentation](https://github.com/beckn/beckn-utilities/tree/main/observer-server)                |
-| Onix Installer                | v0.1.0  | [Release Notes](https://github.com/beckn/beckn-utilities/blob/main/onix-installer/RELEASE.md)                           | [Documentation](https://github.com/beckn/beckn-utilities/tree/main/onix-installer)               |
+| Onix Installer                | v0.1.0  | [Release Notes](https://github.com/beckn/beckn-utilities/blob/main/onix-installer/RELEASE.md)                           | [Documentation](https://github.com/beckn/beckn-utilities/blob/main/onix-installer/START_BECKN.md)               |
 
 ## Getting Started
 
