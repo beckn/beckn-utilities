@@ -88,7 +88,7 @@ sleep 10
 echo "Protocol server BPP installation successful"
 
 if [[ $(systemd-detect-virt) == 'wsl' ]]; then
-    ip=$(hostname -I)
+    ip=$(hostname -I | awk '{print $1}')
     bap_network_ip=$ip
     bap_client_ip=$ip
     bpp_network_ip=$ip
