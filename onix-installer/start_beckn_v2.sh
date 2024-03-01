@@ -121,9 +121,22 @@ install_bpp_protocol_server(){
     echo "Protocol server BPP installation successful"
 }
 
+text="
+The following components will be installed
+
+1. Registry
+2. Gateway
+3. Sandbox
+4. Sandbox Webhook
+5. Protocol Server for BAP
+6. Protocol Server for BPP
+"
+
 # Main script starts here
 ./banner.sh
 echo "Welcome to ONIX Installer"
+echo "$text"
+
 read -p "Do you want to install all the components on the local system? (Y/n): " install_all
 
 if [[ $install_all =~ ^[Yy]$ ]]; then

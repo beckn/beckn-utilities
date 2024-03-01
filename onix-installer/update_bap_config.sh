@@ -28,7 +28,12 @@ if [[ $1 ]]; then
     bap_subscriber_id_key=$3
     bap_subscriber_url=$4
 else
-    registry_url="http://$(get_container_ip registry):3030/subscribers"
+    if [[ $(systemd-detect-virt) == 'wsl' ]]; then
+        ip=$(hostname -I | awk '{print $1}')
+        registry_url="http://$ip:3030/subscribers"
+    else
+        registry_url="http://$(get_container_ip registry):3030/subscribers"
+    fi 
 fi
 
 echo "Generating public/private key pair"

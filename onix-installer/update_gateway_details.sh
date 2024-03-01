@@ -33,6 +33,12 @@ update_gateway_config() {
         sed -i "s|REGISTRY_URL|$subscriber_url|g" gateway_data/config/swf.properties
 }
 service_name=$1
-ip=$(get_container_ip $service_name)
+
+if [[ $(systemd-detect-virt) == 'wsl' ]]; then
+    ip=$(hostname -I)
+else
+    ip=$(get_container_ip $service_name)
+fi
+
 get_details_registry $ip
 update_gateway_config
