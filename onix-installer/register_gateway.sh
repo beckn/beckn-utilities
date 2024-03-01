@@ -13,7 +13,7 @@ rm $cookie_file -rf
 }
 
 if [[ $(systemd-detect-virt) == 'wsl' ]]; then
-    ip=$(hostname -I)
+    ip=$(hostname -I | awk '{print $1}')
 else
     ip=$(get_container_ip gateway)
 fi
