@@ -12,5 +12,10 @@ curl --request GET  --cookie $cookie_file $subscribe_url
 rm $cookie_file -rf
 }
 
-ip=$(get_container_ip gateway)
+if [[ $(systemd-detect-virt) == 'wsl' ]]; then
+    ip=$(hostname -I)
+else
+    ip=$(get_container_ip gateway)
+fi
+
 register_gw $ip 

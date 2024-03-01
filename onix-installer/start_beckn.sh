@@ -23,10 +23,26 @@ start_support_services(){
     docker-compose -f docker-compose-app.yml up -d redis_db
     echo "Redis installation successful"
 }
+# Main script starts here
+text="
+Welcome to ONIX Installer!
+The following components will be installed
 
+1. MongoDB, RabbitMQ and Redis
+2. Registry
+3. Gateway
+4. Sandbox
+5. Sandbox Webhook
+6. Protocol Server for BAP
+7. Protocol Server for BPP
+"
+echo "$text"
+sleep 5
 echo "${GREEN}................Installing required packages................${NC}"
 ./package_manager.sh
 echo "Package Installation is done"
+
+export COMPOSE_IGNORE_ORPHANS=1
 
 echo "${GREEN}................Installing Registry service................${NC}"
 start_container registry
@@ -71,10 +87,18 @@ start_container "bpp-network"
 sleep 10
 echo "Protocol server BPP installation successful"
 
-bap_network_ip=$(get_container_ip bap-network)
-bap_client_ip=$(get_container_ip bap-client)
-bpp_network_ip=$(get_container_ip bpp-network)
-bap_network_ip=$(get_container_ip bpp-client)
+if [[ $(systemd-detect-virt) == 'wsl' ]]; then
+    ip=$(hostname -I)
+    bap_network_ip=$ip
+    bap_client_ip=$ip
+    bpp_network_ip=$ip
+    bap_network_ip=$ip
+else
+    bap_network_ip=$(get_container_ip bap-network)
+    bap_client_ip=$(get_container_ip bap-client)
+    bpp_network_ip=$(get_container_ip bpp-network)
+    bap_network_ip=$(get_container_ip bpp-client)
+fi
 
 echo " "
 echo "##########################################################"

@@ -37,7 +37,7 @@ install_package() {
         else
             if ! dpkg -l | grep -q "^ii  $1 "; then
                 sudo apt-get update >/dev/null 2>&1
-                sudo apt-get install -y $1 >/dev/null 2>&1
+                sudo apt-get install -y $1 > /dev/null 2>&1
             else
                 echo "$1 is already installed."
             fi
@@ -53,7 +53,6 @@ install_package() {
                 sudo systemctl start docker.service
                 sudo usermod -aG docker $USER
                 newgrp docker
-                echo "Press Ctrl+d to continue"
             else
                 echo "Docker is already installed."
             fi
@@ -131,7 +130,7 @@ install_docker_compose() {
 
 for package in "${package_list[@]}"; do
     if ! command_exists $package; then
-        install_package "$package"
+	install_package "$package"
     fi
     if [ "$package" == "docker" ]; then
         if [ -f /etc/bash_completion.d/docker ]; then
