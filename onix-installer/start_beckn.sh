@@ -48,7 +48,7 @@ echo "${GREEN}................Installing Registry service................${NC}"
 start_container registry
 sleep 10
 echo "Registry installation successful"
-
+sleep 5
 ./update_gateway_details.sh registry
 echo "${GREEN}................Installing Gateway service................${NC}"
 start_container gateway
@@ -87,7 +87,13 @@ start_container "bpp-network"
 sleep 10
 echo "Protocol server BPP installation successful"
 
-if [[ $(systemd-detect-virt) == 'wsl' ]]; then
+if [[ $(uname -s) == 'Darwin' ]]; then
+    ip=localhost
+    bap_network_ip=$ip
+    bap_client_ip=$ip
+    bpp_network_ip=$ip
+    bap_network_ip=$ip
+elif [[ $(systemd-detect-virt) == 'wsl' ]]; then
     ip=$(hostname -I | awk '{print $1}')
     bap_network_ip=$ip
     bap_client_ip=$ip

@@ -28,7 +28,9 @@ if [[ $1 ]]; then
     bap_subscriber_id_key=$3
     bap_subscriber_url=$4
 else
-    if [[ $(systemd-detect-virt) == 'wsl' ]]; then
+    if [[ $(uname -s) == 'Darwin' ]]; then
+        ip=localhost
+    elif [[ $(systemd-detect-virt) == 'wsl' ]]; then
         ip=$(hostname -I | awk '{print $1}')
         registry_url="http://$ip:3030/subscribers"
     else

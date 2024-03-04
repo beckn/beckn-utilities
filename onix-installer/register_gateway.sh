@@ -12,7 +12,9 @@ curl --request GET  --cookie $cookie_file $subscribe_url
 rm $cookie_file -rf
 }
 
-if [[ $(systemd-detect-virt) == 'wsl' ]]; then
+if [[ $(uname -s) == 'Darwin' ]]; then
+        ip=localhost
+elif [[ $(systemd-detect-virt) == 'wsl' ]]; then
     ip=$(hostname -I | awk '{print $1}')
 else
     ip=$(get_container_ip gateway)

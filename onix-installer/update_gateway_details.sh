@@ -3,13 +3,11 @@ source get_container_details.sh
 
 get_details_registry() {
     # Make the curl request and store the output in a variable
-    echo $1
     response=$(curl --location --request POST "http://$1:3030/subscribers/lookup" \
         --header 'Content-Type: application/json' \
         --data-raw '{
     "type": "LREG"
 }')
-    echo "$response"
     # Check if the curl command was successful (HTTP status code 2xx)
     if [ $? -eq 0 ]; then
         # Extract signing_public_key and encr_public_key using jq
@@ -34,7 +32,9 @@ update_gateway_config() {
 }
 service_name=$1
 
-if [[ $(systemd-detect-virt) == 'wsl' ]]; then
+if [[ $(uname -s) == 'Darwin' ]]; then
+    ip=localhost
+elif [[ $(systemd-detect-virt) == 'wsl' ]]; then
     ip=$(hostname -I | awk '{print $1}')
 else
     ip=$(get_container_ip $service_name)
