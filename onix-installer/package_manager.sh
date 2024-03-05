@@ -92,8 +92,8 @@ remove_package(){
 # Function to install Docker
 install_docker_bash() {
     # Install Docker Bash completion
-        echo "Installing Docker Bash completion..."
-        sudo curl -L https://raw.githubusercontent.com/docker/cli/master/contrib/completion/bash/docker -o /etc/bash_completion.d/docker
+    echo "Installing Docker Bash completion..."
+    sudo curl -L https://raw.githubusercontent.com/docker/cli/master/contrib/completion/bash/docker -o /etc/bash_completion.d/docker
 }
 
 # Function to install Docker Compose
@@ -133,14 +133,18 @@ for package in "${package_list[@]}"; do
 	install_package "$package"
     fi
     if [ "$package" == "docker" ]; then
-        if [ -f /etc/bash_completion.d/docker ]; then
-            echo "Docker Bash completion is already installed."
-        else
-            install_docker_bash
+        if [[ $(uname -s ) == 'Linux' ]];then        
+            if [ -f /etc/bash_completion.d/docker ]; then
+                echo "Docker Bash completion is already installed."
+            else
+                install_docker_bash
+            fi
         fi
     fi
     if [ "$package" == "docker-compose" ]; then
-        install_docker_compose
+        if [[ $(uname -s ) == 'Linux' ]];then
+            install_docker_compose
+        fi
     fi
 done
 
