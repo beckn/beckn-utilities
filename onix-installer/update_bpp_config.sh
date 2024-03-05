@@ -28,9 +28,9 @@ fi
 
 if [[ $1 ]]; then
     registry_url=$1
-    bap_subscriber_id=$2
-    bap_subscriber_id_key=$3
-    bap_subscriber_url=$4
+    bpp_subscriber_id=$2
+    bpp_subscriber_id_key=$3
+    bpp_subscriber_url=$4
 else
     if [[ $(uname -s) == 'Darwin' ]]; then
         ip=localhost
