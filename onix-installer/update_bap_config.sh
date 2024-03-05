@@ -45,7 +45,13 @@ echo "Your Public Key: $public_key"
 
 
 valid_from=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
-valid_until=$(date -u -d "+1 year" +"%Y-%m-%dT%H:%M:%S.%3NZ")
+
+if [[ $(uname -s ) == 'Darwin' ]];then
+    valid_until=$(date -u -v+1y +"%Y-%m-%dT%H:%M:%S.%3NZ")
+else
+    valid_until=$(date -u -d "+1 year" +"%Y-%m-%dT%H:%M:%S.%3NZ")
+fi
+
 type=BAP
 
 
@@ -70,7 +76,11 @@ echo "Configuring BAP protocol server"
 # Apply replacements in both files
 for file in "$clientFile" "$networkFile"; do
     for key in "${!replacements[@]}"; do
-        sed -i "s|$key|${replacements[$key]}|" "$file"
+        if [[ $(uname) == "Darwin" ]]; then
+            sed -i '' "s|$key|${replacements[$key]}|" "$file"
+        else
+            sed -i "s|$key|${replacements[$key]}|" "$file"
+        fi
     done
 done
 
