@@ -8,6 +8,7 @@ source get_container_details.sh
 
 newClientFile=$(echo "$bapClientFile" | sed 's/yaml-sample/yml/')
 newNetworkFile=$(echo "$bapNetworkFile" | sed 's/yaml-sample/yml/')
+
 cp $bapClientFile $newClientFile
 cp $bapNetworkFile $newNetworkFile
 
@@ -18,11 +19,11 @@ client_port=$bap_client_port
 network_port=$bap_network_port
 
 if [[ $(uname) == "Darwin" ]]; then
-    sed -i '' "s|BPP_NETWORK_PORT|$network_port|" $networkFile
-    sed -i '' "s|BPP_CLIENT_PORT|$client_port|" $clientFile
+    sed -i '' "s|BAP_NETWORK_PORT|$network_port|" $networkFile
+    sed -i '' "s|BAP_CLIENT_PORT|$client_port|" $clientFile
 else
-    sed -i "s|BPP_NETWORK_PORT|$network_port|" $networkFile
-    sed -i "s|BPP_CLIENT_PORT|$client_port|" $clientFile
+    sed -i "s|BAP_NETWORK_PORT|$network_port|" $networkFile
+    sed -i "s|BAP_CLIENT_PORT|$client_port|" $clientFile
 fi
 
 if [[ $1 ]]; then
@@ -60,33 +61,60 @@ type=BAP
 
 
 # Define an associative array for replacements
-replacements=(
-    ["REDIS_URL"]=$redisUrl
-    ["REGISTRY_URL"]=$registry_url
-    ["MONGO_USERNAME"]=$mongo_initdb_root_username
-    ["MONGO_PASSWORD"]=$mongo_initdb_root_password
-    ["MONGO_DB_NAME"]=$mongo_initdb_database
-    ["MONOG_URL"]=$mongoUrl
-    ["RABBITMQ_USERNAME"]=$rabbitmq_default_user
-    ["RABBITMQ_PASSWORD"]=$rabbitmq_default_pass
-    ["RABBITMQ_URL"]=$rabbitmqUrl
-    ["PRIVATE_KEY"]=$private_key
-    ["PUBLIC_KEY"]=$public_key
-    ["BAP_SUBSCRIBER_ID"]=$bap_subscriber_id
-    ["BAP_SUBSCRIBER_URL"]=$bap_subscriber_url
-    ["BAP_SUBSCRIBER_ID_KEY"]=$bap_subscriber_id_key
-)
-echo "Configuring BAP protocol server"
-# Apply replacements in both files
-for file in "$clientFile" "$networkFile"; do
-    for key in "${!replacements[@]}"; do
-        if [[ $(uname) == "Darwin" ]]; then
-            sed -i '' "s|$key|${replacements[$key]}|" "$file"
-        else
-            sed -i "s|$key|${replacements[$key]}|" "$file"
-        fi
+if [[ $(uname -s ) == 'Darwin' ]];then
+    replacements=(
+        "REDIS_URL=$redisUrl"
+        "REGISTRY_URL=$registry_url"
+        "MONGO_USERNAME=$mongo_initdb_root_username"
+        "MONGO_PASSWORD=$mongo_initdb_root_password"
+        "MONGO_DB_NAME=$mongo_initdb_database"
+        "MONOG_URL=$mongoUrl"
+        "RABBITMQ_USERNAME=$rabbitmq_default_user"
+        "RABBITMQ_PASSWORD=$rabbitmq_default_pass"
+        "RABBITMQ_URL=$rabbitmqUrl"
+        "PRIVATE_KEY=$private_key"
+        "PUBLIC_KEY=$public_key"
+        "BAP_SUBSCRIBER_ID=$bap_subscriber_id"
+        "BAP_SUBSCRIBER_URL=$bap_subscriber_url"
+        "BAP_SUBSCRIBER_ID_KEY=$bap_subscriber_id_key"
+    )
+
+    echo "Configuring BAP protocol server"
+    # Apply replacements in both files
+    for file in "$clientFile" "$networkFile"; do
+        for line in "${replacements[@]}"; do
+            key=$(echo "$line" | cut -d '=' -f1)
+            value=$(echo "$line" | cut -d '=' -f2)
+            sed -i '' "s|$key|$value|" "$file"
+        done
+
     done
-done
+else
+    declare -A replacements==(
+        ["REDIS_URL"]=$redisUrl
+        ["REGISTRY_URL"]=$registry_url
+        ["MONGO_USERNAME"]=$mongo_initdb_root_username
+        ["MONGO_PASSWORD"]=$mongo_initdb_root_password
+        ["MONGO_DB_NAME"]=$mongo_initdb_database
+        ["MONOG_URL"]=$mongoUrl
+        ["RABBITMQ_USERNAME"]=$rabbitmq_default_user
+        ["RABBITMQ_PASSWORD"]=$rabbitmq_default_pass
+        ["RABBITMQ_URL"]=$rabbitmqUrl
+        ["PRIVATE_KEY"]=$private_key
+        ["PUBLIC_KEY"]=$public_key
+        ["BAP_SUBSCRIBER_ID"]=$bap_subscriber_id
+        ["BAP_SUBSCRIBER_URL"]=$bap_subscriber_url
+        ["BAP_SUBSCRIBER_ID_KEY"]=$bap_subscriber_id_key
+    )
+
+    echo "Configuring BAP protocol server"
+    # Apply replacements in both files
+    for file in "$clientFile" "$networkFile"; do
+        for key in "${!replacements[@]}"; do
+            sed -i "s|$key|${replacements[$key]}|" "$file"
+        done
+    done
+fi
 
 echo "Registering BAP protocol server on the registry"
 
