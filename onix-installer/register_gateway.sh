@@ -13,7 +13,7 @@ rm $cookie_file -rf
 }
 
 if [[ $(uname -s) == 'Darwin' ]]; then
-        ip=localhost
+    ip=localhost
 elif [[ $(systemd-detect-virt) == 'wsl' ]]; then
     ip=$(hostname -I | awk '{print $1}')
 else
