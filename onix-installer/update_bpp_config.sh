@@ -18,8 +18,13 @@ networkFile=$newNetworkFile
 client_port=$bpp_client_port
 network_port=$bpp_network_port
 
-sed -i "s|BPP_NETWORK_PORT|$network_port|" $networkFile
-sed -i "s|BPP_CLIENT_PORT|$client_port|" $clientFile
+if [[ $(uname) == "Darwin" ]]; then
+    sed -i '' "s|BPP_NETWORK_PORT|$network_port|" $networkFile
+    sed -i '' "s|BPP_CLIENT_PORT|$client_port|" $clientFile
+else
+    sed -i "s|BPP_NETWORK_PORT|$network_port|" $networkFile
+    sed -i "s|BPP_CLIENT_PORT|$client_port|" $clientFile
+fi 
 
 if [[ $1 ]]; then
     registry_url=$1
@@ -53,7 +58,7 @@ type=BPP
 
 
 # Define an associative array for replacements
-declare -A replacements=(
+replacements=(
     ["REDIS_URL"]=$redisUrl
     ["REGISTRY_URL"]=$registry_url
     ["MONGO_USERNAME"]=$mongo_initdb_root_username
