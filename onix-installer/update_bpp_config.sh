@@ -59,34 +59,63 @@ type=BPP
 
 
 # Define an associative array for replacements
-replacements=(
-    ["REDIS_URL"]=$redisUrl
-    ["REGISTRY_URL"]=$registry_url
-    ["MONGO_USERNAME"]=$mongo_initdb_root_username
-    ["MONGO_PASSWORD"]=$mongo_initdb_root_password
-    ["MONGO_DB_NAME"]=$mongo_initdb_database
-    ["MONOG_URL"]=$mongoUrl
-    ["RABBITMQ_USERNAME"]=$rabbitmq_default_user
-    ["RABBITMQ_PASSWORD"]=$rabbitmq_default_pass
-    ["RABBITMQ_URL"]=$rabbitmqUrl
-    ["PRIVATE_KEY"]=$private_key
-    ["PUBLIC_KEY"]=$public_key
-    ["BPP_SUBSCRIBER_URL"]=$bpp_subscriber_url
-    ["BPP_SUBSCRIBER_ID"]=$bpp_subscriber_id
-    ["BPP_SUBSCRIBER_ID_KEY"]=$bpp_subscriber_id_key
-    ["WEBHOOK_URL"]=$webhook_url
-)
-echo "Configuring BPP protocol server"
-# Apply replacements in both files
-for file in "$clientFile" "$networkFile"; do
-    for key in "${!replacements[@]}"; do
-        if [[ $(uname) == "Darwin" ]]; then
-            sed -i '' "s|$key|${replacements[$key]}|" "$file"
-        else
-            sed -i "s|$key|${replacements[$key]}|" "$file"
-        fi
+if [[ $(uname -s ) == 'Darwin' ]];then
+    replacements=(
+        "REDIS_URL=$redisUrl"
+        "REGISTRY_URL=$registry_url"
+        "MONGO_USERNAME=$mongo_initdb_root_username"
+        "MONGO_PASSWORD=$mongo_initdb_root_password"
+        "MONGO_DB_NAME=$mongo_initdb_database"
+        "MONOG_URL=$mongoUrl"
+        "RABBITMQ_USERNAME=$rabbitmq_default_user"
+        "RABBITMQ_PASSWORD=$rabbitmq_default_pass"
+        "RABBITMQ_URL=$rabbitmqUrl"
+        "PRIVATE_KEY=$private_key"
+        "PUBLIC_KEY=$public_key"
+        "BPP_SUBSCRIBER_URL=$bpp_subscriber_url"
+        "BPP_SUBSCRIBER_ID=$bpp_subscriber_id"
+        "BPP_SUBSCRIBER_ID_KEY=$bpp_subscriber_id_key"
+        "WEBHOOK_URL=$webhook_url"
+    )
+
+    echo "Configuring BPP protocol server"
+    # Apply replacements in both files
+    for file in "$clientFile" "$networkFile"; do
+        for line in "${replacements[@]}"; do
+            key=$(echo "$line" | cut -d '=' -f1)
+            value=$(echo "$line" | cut -d '=' -f2)
+            sed -i '' "s|$key|$value|" "$file"
+        done
+
     done
-done
+
+else
+    declare -A replacements=(
+        ["REDIS_URL"]=$redisUrl
+        ["REGISTRY_URL"]=$registry_url
+        ["MONGO_USERNAME"]=$mongo_initdb_root_username
+        ["MONGO_PASSWORD"]=$mongo_initdb_root_password
+        ["MONGO_DB_NAME"]=$mongo_initdb_database
+        ["MONOG_URL"]=$mongoUrl
+        ["RABBITMQ_USERNAME"]=$rabbitmq_default_user
+        ["RABBITMQ_PASSWORD"]=$rabbitmq_default_pass
+        ["RABBITMQ_URL"]=$rabbitmqUrl
+        ["PRIVATE_KEY"]=$private_key
+        ["PUBLIC_KEY"]=$public_key
+        ["BPP_SUBSCRIBER_URL"]=$bpp_subscriber_url
+        ["BPP_SUBSCRIBER_ID"]=$bpp_subscriber_id
+        ["BPP_SUBSCRIBER_ID_KEY"]=$bpp_subscriber_id_key
+        ["WEBHOOK_URL"]=$webhook_url
+    )
+
+    echo "Configuring BAP protocol server"
+    # Apply replacements in both files
+    for file in "$clientFile" "$networkFile"; do
+        for key in "${!replacements[@]}"; do
+            sed -i "s|$key|${replacements[$key]}|" "$file"
+        done
+    done
+fi
 
 echo "Registering BPP protocol server on the registry"
 
