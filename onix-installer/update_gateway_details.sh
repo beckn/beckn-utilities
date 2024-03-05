@@ -26,9 +26,13 @@ update_gateway_config() {
         echo "Encryption Public Key: $encr_public_key"
         echo "URL $subscriber_url"
         cp gateway_data/config/swf.properties-sample gateway_data/config/swf.properties
-        sed -i "s|SIGNING_PUBLIC_KEY|$signing_public_key|g" gateway_data/config/swf.properties
-        sed -i "s|ENCRYPTION_PUBLIC_KEY|$encr_public_key|g" gateway_data/config/swf.properties
-        sed -i "s|REGISTRY_URL|$subscriber_url|g" gateway_data/config/swf.properties
+        config_file="gateway_data/config/swf.properties"
+        
+        tmp_file=$(mktemp "tempfile.XXXXXXXXXX")
+        sed "s|SIGNING_PUBLIC_KEY|$signing_public_key|g; s|ENCRYPTION_PUBLIC_KEY|$encr_public_key|g; s|REGISTRY_URL|$subscriber_url|g" "$config_file" > "$tmp_file"
+        #sed -i '' "s|SIGNING_PUBLIC_KEY|$signing_public_key|g; s|ENCRYPTION_PUBLIC_KEY|$encr_public_key|g; s|REGISTRY_URL|$subscriber_url|g" "$config_file"
+        #sed -i "s|SIGNING_PUBLIC_KEY|$signing_public_key|g; s|ENCRYPTION_PUBLIC_KEY|$encr_public_key|g; s|REGISTRY_URL|$subscriber_url|g" "$config_file"
+        mv "$tmp_file" "$config_file"
 }
 service_name=$1
 
