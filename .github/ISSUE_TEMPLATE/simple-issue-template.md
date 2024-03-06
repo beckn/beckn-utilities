@@ -1,11 +1,3 @@
----
-name: Simple issue template
-about: Template for issue creation
-title: ''
-labels: ''
-assignees: ''
-
----
 
 ## Description
 
@@ -35,42 +27,21 @@ assignees: ''
 
 [List any technical details about the proposed implementation, including any specific technologies that will be used.]
 
-## Mockups / Wireframes
+## Mockups / Wireframes / Architecture
 
 [Include links to any visual aids, mockups, wireframes, or diagrams that help illustrate what the final product should look like. This is not always necessary, but can be very helpful in many cases.]
 
 ---
 
-[Please note that the below section of the ticket ****has to be in the format as mentioned as it is key to enabling proper listing of the project.**** Please only choose the options mentioned under the headings wherever applicable.]
-
 ### Product Name
 
 [Product Name: For eg: Beckn, Sunbird Obsrv etc]
-
-### Project Name
-
-[Project Name: Descriptive of the ticket]
-
-### Organization Name:
-
-[Organization Name]
-
-### Domain
-
-[Area of governance]
 
 ### Tech Skills Needed:
 
 [Required technical skills for the project]
 
-### Complexity
-
-Pick one of [High]/[Medium]/[Low]
-
 ### Category
 
 Pick one or more of [CI/CD], [Integrations], [Performance Improvement], [Security], [UI/UX/Design], [Bug], [Feature], [Documentation], [Deployment], [Test], [PoC]
 
-### Sub Category
-
-Pick one or more of [API], [Database], [Analytics], [Refactoring], [Data Science], [Machine Learning], [Accessibility], [Internationalization], [Localization], [Frontend], [Backend], [Mobile], [SEO], [Configuration], [Deprecation], [Breaking Change], [Maintenance], [Support], [Question], [Technical Debt], [Beginner friendly], [Research], [Reproducible], [Needs Reproduction].
