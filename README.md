@@ -15,4 +15,11 @@ Welcome to the Beckn Utilities repository! This repository houses multiple utili
 
 Each utility has its own set of instructions for installation, configuration, and usage. Please refer to the documentation links provided above for detailed information on how to use each utility.
 
-
+## Recommendations on what goes into this repo
+* It should not have any project that has github integration in its workflow (e.g. projects that automatically deploy on server when we checkin code etc). The reason is that it might be difficult to configure and the workflow will be triggered when unrelated files are modified.
+* It should not have any project that has Continuous Deployment component. Again similar to 1 above. It will involve deployment when unrelated files are modified.
+* It should not have any project that will involve large community component. The reason here simply is that we will be asking users to get unrelated code onto their workspace.
+* It should not be used for projects which have binary assets such as images, pdf files etc. The reason is that in text based SCM tools, these are usually kept as is without diff and so the overall repo size will be high.
+* It can be used for small tools that have their own publishing workflow (e.g. npm libraries)
+* It can be used for internal tools and projects which involves very few developers (preferably only internal)
+* When in doubt, I think we should use separate repo.
