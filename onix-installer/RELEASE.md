@@ -1,7 +1,5 @@
 # Release Notes
 
-## ONIX Version 0.1.0 (2024-02-16)
-
 ### Objective
 ONIX - Open Network In A Box, is a utility designed to effortlessly set up all BECKN components on a machine using a one-click installer. This tool serves as a valuable resource for developers and network participants eager to explore BECKN protocols or join open networks supported by the BECKN protocol. By simplifying the installation process, ONIX streamlines the onboarding experience.
 
@@ -10,6 +8,44 @@ The current version installs all components automatically without requiring user
 For a comprehensive summary of the features, refer [here](https://github.com/beckn/beckn-utilities/milestone/2?closed=1)
 
 Experience the convenience and efficiency of ONIX as you embark on your journey with BECKN protocols and open networks.
+
+## ONIX Version 0.2.0 (2024-03-01)
+
+### New Features
+- Installation of individual components with user-provided configuration.
+- Support for Windows operating system (Windows 10).
+- Support for Mac operating system.
+ 
+This release is specifically tailored to make the deployment of individual components possible.
+This also supports Windows and Mac operating systems, with user-provided custom configurations.
+
+### Enhancements
+- Support for Windows operating system.
+- Support for Mac operating system.
+
+### Bug Fixes
+- None
+
+### Known Issues
+- None
+
+### Limitations
+- The current installer is tested only for Linux (Ubuntu) / Windows (windows 10) / Mac , it might support other flavors also.
+- The current version installs all the components on the docker, Kubernetes support is not there.
+
+
+### Upcoming Version
+- Installation of individual components with user-provided configuration.
+- Support for Windows and Mac OS will be added.
+
+### Release Date
+- 2024-03-01
+
+
+
+
+
+## ONIX Version 0.1.0 (2024-02-16)
 
 ### New Features
 - Implemented installation support for the following BECKN components:
