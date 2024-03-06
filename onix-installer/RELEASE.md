@@ -18,6 +18,9 @@ Experience the convenience and efficiency of ONIX as you embark on your journey 
 
 This release is specifically designed to facilitate the deployment of individual components, offering users the flexibility to customize configurations. Furthermore, it ensures seamless compatibility with both Windows and Mac operating systems.
 
+For a comprehensive summary of the features, refer [here](https://github.com/beckn/beckn-utilities/milestone/1?closed=1)
+
+
 ### Enhancements
 - Support for Windows operating system.
 - Support for Mac operating system.
