@@ -12,16 +12,16 @@ Experience the convenience and efficiency of ONIX as you embark on your journey 
 ## ONIX Version 0.2.0 (2024-03-01)
 
 ### New Features
-- Installation of individual components with user-provided configuration.
-- Support for Windows operating system (Windows 10).
-- Support for Mac operating system.
- 
-This release is specifically tailored to make the deployment of individual components possible.
-This also supports Windows and Mac operating systems, with user-provided custom configurations.
+- This release focuses on enabling the installation of individual components with user-provided configurations.
+- It extends support to the Windows operating system, specifically Windows 10.
+- Additionally, it now supports the Mac operating system.
+
+This release is specifically designed to facilitate the deployment of individual components, offering users the flexibility to customize configurations. Furthermore, it ensures seamless compatibility with both Windows and Mac operating systems.
 
 ### Enhancements
 - Support for Windows operating system.
 - Support for Mac operating system.
+- Can be used to install specific components with custom configuration.
 
 ### Bug Fixes
 - None
@@ -30,13 +30,13 @@ This also supports Windows and Mac operating systems, with user-provided custom 
 - None
 
 ### Limitations
-- The current installer is tested only for Linux (Ubuntu) / Windows (windows 10) / Mac , it might support other flavors also.
-- The current version installs all the components on the docker, Kubernetes support is not there.
+- The current installer is tested only for Linux (Ubuntu) / Windows (windows 10) / Mac, it might support other flavors also.
+- The current version supports only vertical scaling, horizontal scaling (ECS / EKS) is planned for an upcoming release
+- When installing individual components, registration with the registry has to be done manually, this is explicitly done to avoid confusion and to prevent the network from incorrect or wrong registrations.
 
 
 ### Upcoming Version
-- Installation of individual components with user-provided configuration.
-- Support for Windows and Mac OS will be added.
+- Support for horizontal scaling using Elastic Kubernetes Cluster.
 
 ### Release Date
 - 2024-03-01
