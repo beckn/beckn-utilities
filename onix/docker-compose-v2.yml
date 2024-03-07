@@ -95,6 +95,17 @@ services:
     volumes:
       - ./protocol-server-data/bpp-network.yml:/usr/src/app/config/default.yml
 
+  generic-client-layer:
+    image: fidedocker/generic-client-layer
+    container_name: generic-client-layer
+    networks:
+      - beckn_network
+    ports:
+      - 3015:3000
+    restart: unless-stopped
+    volumes:
+      - ./ENV/.env-generic-client-layer:/app/.env
+
 networks:
   beckn_network:
     driver: bridge

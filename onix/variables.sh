@@ -36,7 +36,7 @@ bap_network_port=5002
 bap_subscriber_id="bap-network"
 bap_subscriber_id_key="bap-network-key"
 bap_subscriber_url="http://bap-network:5002"
-
+bap_client_url="http://bap-client:5002"
 
 #BPP varibales. 
 
