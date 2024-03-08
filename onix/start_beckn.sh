@@ -25,7 +25,7 @@ start_support_services(){
 }
 # Main script starts here
 text="
-Welcome to ONIX Installer!
+Welcome to ONIX!
 The following components will be installed
 
 1. MongoDB, RabbitMQ and Redis

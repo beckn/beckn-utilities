@@ -15,7 +15,7 @@ This shell script, `start_beckn.sh`, automates the setup of Beckn services, incl
 2. **Navigate to the Script Directory:**
 
    ```bash
-   cd beckn-utilities/onix-installer
+   cd beckn-utilities/onix
    ```
 
 3. **Run the Setup Script:**

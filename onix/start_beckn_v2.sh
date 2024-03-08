@@ -134,7 +134,7 @@ The following components will be installed
 
 # Main script starts here
 ./banner.sh
-echo "Welcome to ONIX Installer"
+echo "Welcome to ONIX"
 echo "$text"
 
 read -p "Do you want to install all the components on the local system? (Y/n): " install_all
@@ -153,9 +153,10 @@ else
     echo "2. BAP Protocol Server"
     echo "3. BPP Protocol Server with BPP Sandbox"
     echo "4. BPP Protocol Server"
-    echo "5. Exit"
+    echo "5. Generic Client Layer"
+    echo "6. Exit"
     
-    read -p "Enter your choice (1-5): " user_choice
+    read -p "Enter your choice (1-6): " user_choice
 
     case $user_choice in
         1)
@@ -196,12 +197,22 @@ else
             install_package
             install_bpp_protocol_server $registry_url $bpp_subscriber_id $bpp_subscriber_id_key $bpp_subscriber_url $webhook_url
             ;;
+
         5)
-            echo "Exiting ONIX Installer"
+            echo "${GREEN}................Installing GENERIC CLIENT LAYER................${NC}"
+            read -p "Enter BAP Subscriber ID: " bap_subscriber_id
+            read -p "Enter BAP Subscriber URL: " bap_subscriber_url
+            read -p "Enter BAP Client URL: " bap_client_url
+            ./generic-client-layer.sh $bap_subscriber_id $bap_subscriber_url $bap_client_url
+            start_container "generic-client-layer"
+            ;;
+
+        6)
+            echo "Exiting ONIX"
             exit 0
             ;;
         *)
-            echo "Invalid choice. Exiting ONIX Installer."
+            echo "Invalid choice. Exiting ONIX."
             exit 1
             ;;
     esac
