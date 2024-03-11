@@ -8,9 +8,7 @@ Experience the convenience and efficiency of ONIX as you embark on your journey 
 
 | Version | Release Date |
 |---------|--------------|
-| v0.2.0    | 2024-03-01   |
-| v0.2.0   | 2024-02-16   |
-
+| [v0.1.0](https://github.com/beckn/beckn-utilities/blob/main/onix/release/RELEASE_0.1.0.md)    | 2024-03-01   |
 
 
 ## ONIX Version 0.2.0 (2024-03-01)
