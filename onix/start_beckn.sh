@@ -1,6 +1,6 @@
 #!/bin/bash
-source variables.sh
-source get_container_details.sh
+source ./scripts/variables.sh
+source ./scripts/get_container_details.sh
 
 #below function will start specifice service inside docker-compose file
 start_container(){
@@ -39,7 +39,7 @@ The following components will be installed
 echo "$text"
 sleep 5
 echo "${GREEN}................Installing required packages................${NC}"
-./package_manager.sh
+./scripts/package_manager.sh
 echo "Package Installation is done"
 
 export COMPOSE_IGNORE_ORPHANS=1
@@ -49,12 +49,13 @@ start_container registry
 sleep 10
 echo "Registry installation successful"
 sleep 5
-./update_gateway_details.sh registry
+./scripts/update_gateway_details.sh registry
 echo "${GREEN}................Installing Gateway service................${NC}"
 start_container gateway
 echo "Registering Gateway in the registry"
 sleep 5
-./register_gateway.sh
+./scripts/register_gateway.sh
+echo " "
 echo "Gateway installation successful"
 
 #Start the MongoDB, Redis and RabbitMQ Services.
@@ -62,7 +63,7 @@ start_support_services
 sleep 10
 
 echo "${GREEN}................Installing Protocol Server for BAP................${NC}"
-./update_bap_config.sh
+./scripts/update_bap_config.sh
 sleep 10
 start_container "bap-client"
 start_container "bap-network"
@@ -80,7 +81,7 @@ sleep
 echo "Webhook installation successful"
 
 echo "${GREEN}................Installing Protocol Server for BPP................${NC}"
-./update_bpp_config.sh
+bash scripts/update_bpp_config.sh
 sleep 10
 start_container "bpp-client"
 start_container "bpp-network"
