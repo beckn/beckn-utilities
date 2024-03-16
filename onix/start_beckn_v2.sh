@@ -31,7 +31,7 @@ update_registry_details() {
         registry_port=3030
         protocol=http
     fi
-    echo $registry_url $registry_port $protocol
+
     cp $SCRIPT_DIR/../registry_data/config/swf.properties-sample $SCRIPT_DIR/../registry_data/config/swf.properties
     config_file="$SCRIPT_DIR/../registry_data/config/swf.properties"
         
@@ -58,7 +58,7 @@ start_support_services(){
 }
 
 install_gateway() {
-    if [[ $1 && $2 ]];then
+    if [[ $1 && $2 ]]; then
         bash scripts/update_gateway_details.sh $1 $2
     else
         bash scripts/update_gateway_details.sh registry 
@@ -67,7 +67,11 @@ install_gateway() {
     start_container gateway
     echo "Registering Gateway in the registry"
     sleep 5
-    bash scripts/register_gateway.sh
+    if [[ $1 && $2 ]]; then
+        bash scripts/register_gateway.sh $2
+    else
+        bash scripts/register_gateway.sh
+    fi
     echo " "
     echo "Gateway installation successful"
 }
@@ -208,7 +212,7 @@ else
                 read -p "Enter publicly accessible gateway URL: " gateway_url
                 install_package
                 install_registry $registry_url
-                install_gateway $gateway_url
+                install_gateway $registry_url $gateway_url
             else
                 install_package
                 install_registry
