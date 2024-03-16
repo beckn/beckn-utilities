@@ -2,12 +2,8 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $SCRIPT_DIR/get_container_details.sh
 
-login_url="http://$1:4030/login?name=root&password=root&_LOGIN=Login"
-subscribe_url="http://$1:4030/bg/subscribe"
-cookie_file="cookies.txt"
-
 register_gw() {
-
+cookie_file="cookies.txt"
 # Step 1: Perform login and save the session cookies to a file
 curl --cookie-jar $cookie_file --request POST $login_url
 
@@ -25,8 +21,12 @@ fi
 
 if [[ $1 ]]; then
     if [[ $1 == https://* ]]; then
-    login_url="$1/login?name=root&password=root&_LOGIN=Login"
-    subscribe_url="$1/bg/subscribe"
+        login_url="$1/login?name=root&password=root&_LOGIN=Login"
+        subscribe_url="$1/bg/subscribe"
+        register_gw
+    fi
 else
-    register_gw $ip
+    login_url="http://$ip:4030/login?name=root&password=root&_LOGIN=Login"
+    subscribe_url="http://$ip:4030/bg/subscribe"
+    register_gw
 fi 
