@@ -231,8 +231,8 @@ else
                 fi
 
                 install_package
-                install_registry ${new_registry_url%/}
-                install_gateway ${new_registry_url%/} ${gateway_url%/}
+                install_registry $new_registry_url
+                install_gateway $new_registry_url $gateway_url
 
             else
                 install_package
