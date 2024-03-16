@@ -75,6 +75,7 @@ install_gateway() {
     echo "${GREEN}................Installing Gateway service................${NC}"
     start_container gateway
     echo "Registering Gateway in the registry"
+
     sleep 10
     if [[ $1 && $2 ]]; then
         bash scripts/register_gateway.sh $2
@@ -219,10 +220,20 @@ else
             if [[ $change_url =~ ^[Yy]$ ]]; then
                 read -p "Enter publicly accessible registry URL: " registry_url
                 read -p "Enter publicly accessible gateway URL: " gateway_url
-                new_registry_url=$registry_url
+                
+                if [[ $registry_url =~ /$ ]]; then
+                    new_registry_url=${registry_url%/}
+                else
+                    new_registry_url=$registry_url
+                fi
+                if [[ $gateway_url =~ /$ ]]; then
+                    gateway_url=${gateway_url%/}
+                fi
+
                 install_package
-                install_registry $new_registry_url
-                install_gateway $new_registry_url $gateway_url
+                install_registry ${new_registry_url%/}
+                install_gateway ${new_registry_url%/} ${gateway_url%/}
+
             else
                 install_package
                 install_registry
