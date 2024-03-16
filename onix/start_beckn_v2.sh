@@ -25,13 +25,22 @@ update_registry_details() {
             fi
             registry_port=443
             protocol=https
+        elif [[ $1 == http://* ]]; then
+            if [[ $(uname -s) == 'Darwin' ]]; then
+                registry_url=$(echo "$1" | sed -E 's/http:\/\///')
+            else
+                registry_url=$(echo "$1" | sed 's/http:\/\///')
+            fi
+            registry_port=80
+            protocol=http
         fi
+
     else
-        registry_url=$registry_url
+        registry_url=registry  
         registry_port=3030
         protocol=http
     fi
-
+    echo $registry_url
     cp $SCRIPT_DIR/../registry_data/config/swf.properties-sample $SCRIPT_DIR/../registry_data/config/swf.properties
     config_file="$SCRIPT_DIR/../registry_data/config/swf.properties"
         
@@ -66,7 +75,7 @@ install_gateway() {
     echo "${GREEN}................Installing Gateway service................${NC}"
     start_container gateway
     echo "Registering Gateway in the registry"
-    sleep 5
+    sleep 10
     if [[ $1 && $2 ]]; then
         bash scripts/register_gateway.sh $2
     else

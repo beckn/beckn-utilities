@@ -36,7 +36,7 @@ update_gateway_config() {
         config_file="$SCRIPT_DIR/../gateway_data/config/swf.properties"
         
         tmp_file=$(mktemp "tempfile.XXXXXXXXXX")
-        sed "s|SIGNING_PUBLIC_KEY|$signing_public_key|g; s|ENCRYPTION_PUBLIC_KEY|$encr_public_key|g; s|GATEWAY_URL|$gateway_url|g; s|GATEWAY_PORT|$gateway_port|g; s|PROTOCOL|$protocol|g; s|REGISTRY_URL|$subscriber_url|g" "$config_file" > "$tmp_file"
+        sed " s|SUBSCRIBER_ID|$gateway_url|g; s|SIGNING_PUBLIC_KEY|$signing_public_key|g; s|ENCRYPTION_PUBLIC_KEY|$encr_public_key|g; s|GATEWAY_URL|$gateway_url|g; s|GATEWAY_PORT|$gateway_port|g; s|PROTOCOL|$protocol|g; s|REGISTRY_URL|$subscriber_url|g" "$config_file" > "$tmp_file"
         mv "$tmp_file" "$config_file"
 }
 
@@ -52,7 +52,9 @@ else
     else
         ip=$(get_container_ip $service_name)
     fi
-    get_details_registry $ip
+    echo $ip
+    reg_url=http://$ip:3030/subscribers/lookup
+    get_details_registry $reg_url
 fi
 
 
@@ -65,6 +67,15 @@ if [[ $2 ]]; then
         fi
         gateway_port=443
         protocol=https
+        update_gateway_config
+    elif [[ $2 == http://* ]]; then
+        if [[ $(uname -s) == 'Darwin' ]]; then
+            gateway_url=$(echo "$2" | sed -E 's/https:\/\///')
+        else
+            gateway_url=$(echo "$2" | sed 's/https:\/\///')
+        fi
+        gateway_port=80
+        protocol=http
         update_gateway_config
     fi
 else
