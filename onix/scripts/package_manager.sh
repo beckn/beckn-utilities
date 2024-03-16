@@ -19,14 +19,14 @@ install_package() {
     if [ -x "$(command -v apt-get)" ]; then
         # APT (Debian/Ubuntu)
         if [ "$1" == "docker" ]; then
-            check=$(command_exists docker)
-            if ! $check; then
+            docker > /dev/null 2>&1
+            if [ $? -ne 0 ]; then
                 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
                 echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
                 sudo apt update >/dev/null 2>&1
                 sudo apt install -y docker-ce docker-ce-cli containerd.io >/dev/null 2>&1
                 sudo usermod -aG docker $USER
-                newgrp docker
+                source ~/.bashrc
                 command_exists docker
                 if [ $? -eq 0 ]; then
                     sleep 10
@@ -54,7 +54,7 @@ install_package() {
                 sudo systemctl enable docker.service
                 sudo systemctl start docker.service
                 sudo usermod -aG docker $USER
-                newgrp docker
+                source ~/.bashrc
             else
                 echo "Docker is already installed."
             fi
