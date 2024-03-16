@@ -210,9 +210,10 @@ else
             if [[ $change_url =~ ^[Yy]$ ]]; then
                 read -p "Enter publicly accessible registry URL: " registry_url
                 read -p "Enter publicly accessible gateway URL: " gateway_url
+                new_registry_url=$registry_url
                 install_package
-                install_registry $registry_url
-                install_gateway $registry_url $gateway_url
+                install_registry $new_registry_url
+                install_gateway $new_registry_url $gateway_url
             else
                 install_package
                 install_registry

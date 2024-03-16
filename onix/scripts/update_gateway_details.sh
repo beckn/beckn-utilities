@@ -5,10 +5,11 @@ source $SCRIPT_DIR/get_container_details.sh
 gateway_url=gateway
 gateway_port=4030
 protocol=http
+reg_url=http://$1:3030/subscribers/lookup
 
 get_details_registry() {
     # Make the curl request and store the output in a variable
-    response=$(curl --location --request POST "http://$1:3030/subscribers/lookup" \
+    response=$(curl --location --request POST "$reg_url" \
         --header 'Content-Type: application/json' \
         --data-raw '{
     "type": "LREG"
@@ -40,7 +41,8 @@ update_gateway_config() {
 }
 
 if [[ $1 == https://* ]]; then
-    get_details_registry $1
+ reg_url=$1/subscribers/lookup
+ get_details_registry $reg_url
 else
     service_name=$1
     if [[ $(uname -s) == 'Darwin' ]]; then
