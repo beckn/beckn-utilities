@@ -52,7 +52,6 @@ else
     else
         ip=$(get_container_ip $service_name)
     fi
-    echo $ip
     reg_url=http://$ip:3030/subscribers/lookup
     get_details_registry $reg_url
 fi
@@ -70,9 +69,9 @@ if [[ $2 ]]; then
         update_gateway_config
     elif [[ $2 == http://* ]]; then
         if [[ $(uname -s) == 'Darwin' ]]; then
-            gateway_url=$(echo "$2" | sed -E 's/https:\/\///')
+            gateway_url=$(echo "$2" | sed -E 's/http:\/\///')
         else
-            gateway_url=$(echo "$2" | sed 's/https:\/\///')
+            gateway_url=$(echo "$2" | sed 's/http:\/\///')
         fi
         gateway_port=80
         protocol=http
