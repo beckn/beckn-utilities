@@ -6,9 +6,9 @@ swf.application.authentication.required=false
 
 
 #swf.host=localhost
-swf.host=registry
-swf.external.port=3030
-swf.external.scheme=http
+swf.host=REGISTRY_URL
+swf.external.port=REGISTRY_PORT
+swf.external.scheme=PROTOCOL
 
 
 swf.jdbc.driver=org.h2.Driver

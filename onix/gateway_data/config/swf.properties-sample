@@ -6,9 +6,9 @@ beckn.network.timeout=10000
 
 
 #swf.host=localhost
-swf.host=gateway
-swf.external.port=4030
-swf.external.scheme=http
+swf.host=GATEWAY_URL
+swf.external.port=GATEWAY_PORT
+swf.external.scheme=PROTOCOL
 
 
 swf.jdbc.driver=org.h2.Driver
@@ -31,8 +31,8 @@ swf.jdbc.set.dbschema.command=set schema public
 ## Beckn Gateway configurations.
 
 beckn.auth.enabled=true
-in.succinct.beckn.gateway.subscriber_id=gateway
-in.succinct.beckn.gateway.public_key_id=gateway.k1
+in.succinct.beckn.gateway.subscriber_id=SUBSCRIBER_ID
+in.succinct.beckn.gateway.public_key_id=SUBSCRIBER_ID.k1
 in.succinct.beckn.registry.url=REGISTRY_URL
 in.succinct.beckn.registry.signing_public_key=SIGNING_PUBLIC_KEY
 in.succinct.beckn.registry.encryption_public_key=ENCRYPTION_PUBLIC_KEY

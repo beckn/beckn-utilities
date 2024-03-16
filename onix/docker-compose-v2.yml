@@ -27,7 +27,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./gateway_data/config/swf.properties:/gateway/overrideProperties/config/swf.properties
-      - ./gateway_data/database:/gateway/data
+      - ./gateway_data/database:/gateway/database
 
   bap-client:
     image: fidedocker/protocol-server

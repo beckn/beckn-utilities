@@ -1,5 +1,7 @@
 #!/bin/bash
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $SCRIPT_DIR/variables.sh
+
 # Run the script that generates keys and capture the output
 get_keys() {
     docker pull fidedocker/protocol-server > /dev/null 2>&1
