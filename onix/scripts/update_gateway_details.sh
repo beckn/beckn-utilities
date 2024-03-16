@@ -2,6 +2,10 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $SCRIPT_DIR/get_container_details.sh
 
+gateway_url=gateway
+gateway_port=4030
+protocol=http
+
 get_details_registry() {
     # Make the curl request and store the output in a variable
     response=$(curl --location --request POST "http://$1:3030/subscribers/lookup" \
@@ -26,24 +30,41 @@ update_gateway_config() {
         echo "Signing Public Key: $signing_public_key"
         echo "Encryption Public Key: $encr_public_key"
         echo "URL $subscriber_url"
+
         cp $SCRIPT_DIR/../gateway_data/config/swf.properties-sample $SCRIPT_DIR/../gateway_data/config/swf.properties
         config_file="$SCRIPT_DIR/../gateway_data/config/swf.properties"
         
         tmp_file=$(mktemp "tempfile.XXXXXXXXXX")
-        sed "s|SIGNING_PUBLIC_KEY|$signing_public_key|g; s|ENCRYPTION_PUBLIC_KEY|$encr_public_key|g; s|REGISTRY_URL|$subscriber_url|g" "$config_file" > "$tmp_file"
-        #sed -i '' "s|SIGNING_PUBLIC_KEY|$signing_public_key|g; s|ENCRYPTION_PUBLIC_KEY|$encr_public_key|g; s|REGISTRY_URL|$subscriber_url|g" "$config_file"
-        #sed -i "s|SIGNING_PUBLIC_KEY|$signing_public_key|g; s|ENCRYPTION_PUBLIC_KEY|$encr_public_key|g; s|REGISTRY_URL|$subscriber_url|g" "$config_file"
+        sed "s|SIGNING_PUBLIC_KEY|$signing_public_key|g; s|ENCRYPTION_PUBLIC_KEY|$encr_public_key|g; s|GATEWAY_URL|$gateway_url|g; s|GATEWAY_PORT|$gateway_port|g; s|PROTOCOL|$protocol|g; s|REGISTRY_URL|$subscriber_url|g" "$config_file" > "$tmp_file"
         mv "$tmp_file" "$config_file"
 }
-service_name=$1
 
-if [[ $(uname -s) == 'Darwin' ]]; then
-    ip=localhost
-elif [[ $(systemd-detect-virt) == 'wsl' ]]; then
-    ip=$(hostname -I | awk '{print $1}')
+if [[ $1 == https://* ]]; then
+    get_details_registry $1
 else
-    ip=$(get_container_ip $service_name)
+    service_name=$1
+    if [[ $(uname -s) == 'Darwin' ]]; then
+        ip=localhost
+    elif [[ $(systemd-detect-virt) == 'wsl' ]]; then
+        ip=$(hostname -I | awk '{print $1}')
+    else
+        ip=$(get_container_ip $service_name)
+    fi
+    get_details_registry $ip
 fi
 
-get_details_registry $ip
-update_gateway_config
+
+if [[ $2 ]]; then
+    if [[ $2 == https://* ]]; then
+        if [[ $(uname -s) == 'Darwin' ]]; then
+            gateway_url=$(echo "$2" | sed -E 's/https:\/\///')
+        else
+            gateway_url=$(echo "$2" | sed 's/https:\/\///')
+        fi
+        gateway_port=443
+        protocol=https
+        update_gateway_config
+    fi
+else
+    update_gateway_config
+fi

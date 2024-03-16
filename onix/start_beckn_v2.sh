@@ -1,11 +1,11 @@
 #!/bin/bash
-source variables.sh
-source get_container_details.sh
+source scripts/variables.sh
+source scripts/get_container_details.sh
 
 # Function to start a specific service inside docker-compose file
 install_package(){
     echo "${GREEN}................Installing required packages................${NC}"
-    ./package_manager.sh
+    bash scripts/package_manager.sh
     echo "Package Installation is done"
 
 }
@@ -15,6 +15,31 @@ start_container(){
     docker-compose -f docker-compose-v2.yml up -d $1
 }
 
+update_registry_details() {
+    if [[ $1 ]];then
+        if [[ $1 == https://* ]]; then
+            if [[ $(uname -s) == 'Darwin' ]]; then
+                registry_url=$(echo "$1" | sed -E 's/https:\/\///')
+            else
+                registry_url=$(echo "$1" | sed 's/https:\/\///')
+            fi
+            registry_port=443
+            protocol=https
+        fi
+    else
+        registry_url=$registry_url
+        registry_port=3030
+        protocol=http
+    fi
+    echo $registry_url $registry_port $protocol
+    cp $SCRIPT_DIR/../registry_data/config/swf.properties-sample $SCRIPT_DIR/../registry_data/config/swf.properties
+    config_file="$SCRIPT_DIR/../registry_data/config/swf.properties"
+        
+    tmp_file=$(mktemp "tempfile.XXXXXXXXXX")
+    sed "s|REGISTRY_URL|$registry_url|g; s|REGISTRY_PORT|$registry_port|g; s|PROTOCOL|$protocol|g" "$config_file" > "$tmp_file"
+    mv "$tmp_file" "$config_file"
+
+}
 # Function to start the MongoDB, Redis, and RabbitMQ Services
 start_support_services(){
     #ignore orphaned containers warning
@@ -32,20 +57,33 @@ start_support_services(){
     echo "Redis installation successful"
 }
 
-# Function to install Beckn Gateway and Beckn Registry
-install_gateway_and_registry(){
-    echo "${GREEN}................Installing Registry service................${NC}"
-    start_container registry
-    sleep 10
-    echo "Registry installation successful"
-
-    ./update_gateway_details.sh registry
+install_gateway() {
+    if [[ $1 && $2 ]];then
+        bash scripts/update_gateway_details.sh $1 $2
+    else
+        bash scripts/update_gateway_details.sh registry 
+    fi
     echo "${GREEN}................Installing Gateway service................${NC}"
     start_container gateway
     echo "Registering Gateway in the registry"
     sleep 5
-    ./register_gateway.sh
+    bash scripts/register_gateway.sh
+    echo " "
     echo "Gateway installation successful"
+}
+
+# Function to install Beckn Gateway and Beckn Registry
+install_registry(){
+    if [[ $1 ]]; then
+        update_registry_details $1
+    else
+        update_registry_details
+    fi
+
+    echo "${GREEN}................Installing Registry service................${NC}"
+    start_container registry
+    sleep 10
+    echo "Registry installation successful"
 }
 
 # Function to install BAP Protocol Server
@@ -56,9 +94,9 @@ install_bap_protocol_server(){
         bap_subscriber_id=$2
         bap_subscriber_id_key=$3
         bap_subscriber_url=$4
-        ./update_bap_config.sh $registry_url $bap_subscriber_id $bap_subscriber_id_key $bap_subscriber_url
+        bash scripts/update_bap_config.sh $registry_url $bap_subscriber_id $bap_subscriber_id_key $bap_subscriber_url
     else
-        ./update_bap_config
+        bash scripts/update_bap_config
     fi
     sleep 10
     start_container "bap-client"
@@ -69,6 +107,7 @@ install_bap_protocol_server(){
 
 # Function to install BPP Protocol Server with BPP Sandbox
 install_bpp_protocol_server_with_sandbox(){
+    start_support_services
     echo "${GREEN}................Installing Sandbox................${NC}"
     start_container "sandbox-api"
     sleep 5
@@ -86,9 +125,9 @@ install_bpp_protocol_server_with_sandbox(){
         bpp_subscriber_id=$2
         bpp_subscriber_id_key=$3
         bpp_subscriber_url=$4
-        ./update_bpp_config.sh $registry_url $bpp_subscriber_id $bpp_subscriber_id_key $bpp_subscriber_url
+        bash scripts/update_bpp_config.sh $registry_url $bpp_subscriber_id $bpp_subscriber_id_key $bpp_subscriber_url
     else
-        ./update_bpp_config.sh
+        bash scripts/update_bpp_config.sh
     fi
 
     sleep 10
@@ -100,7 +139,7 @@ install_bpp_protocol_server_with_sandbox(){
 
 # Function to install BPP Protocol Server without Sandbox
 install_bpp_protocol_server(){
-    
+    start_support_services
     echo "${GREEN}................Installing Protocol Server for BPP................${NC}"
     
     if [[ $1 ]];then
@@ -109,9 +148,9 @@ install_bpp_protocol_server(){
         bpp_subscriber_id_key=$3
         bpp_subscriber_url=$4
         webhook_url=$5
-        ./update_bpp_config.sh $registry_url $bpp_subscriber_id $bpp_subscriber_id_key $bpp_subscriber_url $$webhook_url
+        bash scripts/update_bpp_config.sh $registry_url $bpp_subscriber_id $bpp_subscriber_id_key $bpp_subscriber_url $$webhook_url
     else
-        ./update_bpp_config.sh
+        bash scripts/update_bpp_config.sh
     fi
 
     sleep 10
@@ -133,16 +172,17 @@ The following components will be installed
 "
 
 # Main script starts here
-./banner.sh
+bash scripts/banner.sh
 echo "Welcome to ONIX"
 echo "$text"
 
-read -p "Do you want to install all the components on the local system? (Y/n): " install_all
+read -p "${GREEN}Do you want to install all the components on the local system? (Y/n): ${NC}" install_all
 
 if [[ $install_all =~ ^[Yy]$ ]]; then
     # Install and bring up everything
     install_package
-    install_gateway_and_registry
+    install_registry
+    install_gateway
     start_support_services
     install_bap_protocol_server
     install_bpp_protocol_server_with_sandbox
@@ -160,8 +200,20 @@ else
 
     case $user_choice in
         1)
-            install_package
-            install_gateway_and_registry
+            echo "${GREEN}Default Registry URL: $registry_url"
+            echo "Default Gateway URL will be docker URL"
+            read -p "Do you want to change Registry and Gateway URL? (Y/N): ${NC}" change_url
+            if [[ $change_url =~ ^[Yy]$ ]]; then
+                read -p "Enter publicly accessible registry URL: " registry_url
+                read -p "Enter publicly accessible gateway URL: " gateway_url
+                install_package
+                install_registry $registry_url
+                install_gateway $gateway_url
+            else
+                install_package
+                install_registry
+                install_gateway
+            fi
             ;;
         2)
             echo "${GREEN}................Installing Protocol Server for BAP................${NC}"
@@ -203,7 +255,7 @@ else
             read -p "Enter BAP Subscriber ID: " bap_subscriber_id
             read -p "Enter BAP Subscriber URL: " bap_subscriber_url
             read -p "Enter BAP Client URL: " bap_client_url
-            ./generic-client-layer.sh $bap_subscriber_id $bap_subscriber_url $bap_client_url
+            bash scripts/generic-client-layer.sh $bap_subscriber_id $bap_subscriber_url $bap_client_url
             start_container "generic-client-layer"
             ;;
 

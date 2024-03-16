@@ -1,5 +1,6 @@
 docker_data
 gateway_data/config/swf.properties
+registry_data/config/swf.properties
 .vscode
 protocol-server-data/bap-client.yml
 protocol-server-data/bap-network.yml
