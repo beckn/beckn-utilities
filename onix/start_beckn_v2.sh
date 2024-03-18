@@ -110,7 +110,7 @@ install_bap_protocol_server(){
         bap_subscriber_url=$4
         bash scripts/update_bap_config.sh $registry_url $bap_subscriber_id $bap_subscriber_id_key $bap_subscriber_url
     else
-        bash scripts/update_bap_config
+        bash scripts/update_bap_config.sh
     fi
     sleep 10
     start_container "bap-client"
