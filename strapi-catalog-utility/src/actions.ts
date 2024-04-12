@@ -9,7 +9,7 @@ export async function index(client: AxiosInstance, resources: string) {
     let pageCount = 0;
     do {
       const response: AxiosResponse = await client.get(
-        `${get_index_string(resources)}&pagination[page]=${currPage + 1}&pagination[pageSize]=100`
+        `${getIndexString(resources)}&pagination[page]=${currPage + 1}&pagination[pageSize]=100`
       );
       responseArray = responseArray.concat(response.data.data);
       currPage += 1;
@@ -21,7 +21,7 @@ export async function index(client: AxiosInstance, resources: string) {
   }
 }
 
-export async function safe_create(
+export async function safeCreate(
   client: AxiosInstance,
   resources: string,
   data: any,
@@ -33,17 +33,23 @@ export async function safe_create(
     if (tObjects) objects = tObjects;
     else objects = (await index(client, resources)) as any[];
     const existingObject = objects?.find((obj) => {
-      let found = true;
-      for (const pk of pks) {
-        let curr_result = false;
-        if (pk.relation) {
-          curr_result = obj.attributes[pk.key].data.id === data[pk.key];
-        } else {
-          curr_result = obj.attributes[pk.key] === data[pk.key];
+      try {
+        let found = true;
+        for (const pk of pks) {
+          let curr_result = false;
+          if (pk.relation) {
+            curr_result = obj.attributes[pk.key].data.id === data[pk.key];
+          } else {
+            curr_result = obj.attributes[pk.key] === data[pk.key];
+          }
+          found = found && curr_result;
         }
-        found = found && curr_result;
+        return found;
+      } catch (err: any) {
+        console.log(err.message);
+        console.log(obj);
+        console.log(resources);
       }
-      return found;
     });
     if (!existingObject) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -58,11 +64,13 @@ export async function safe_create(
       console.log(err.response?.config?.data);
     } else {
       console.log(err.message);
+      console.log(pks);
+      console.log(data);
     }
   }
 }
 
-function get_index_string(resources: string) {
+function getIndexString(resources: string) {
   switch (resources) {
     case "Items":
       return `/api/items?populate[0]=image&populate[1]=provider`;

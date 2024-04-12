@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AxiosInstance } from "axios";
-import { index, safe_create } from "./actions";
+import { index, safeCreate } from "./actions";
 import { PrimaryKey } from "./types";
 
 export async function createObjects(client: AxiosInstance, resourcesName: string, objects: any[], pks: PrimaryKey[]) {
@@ -11,7 +11,7 @@ export async function createObjects(client: AxiosInstance, resourcesName: string
   if (oldObjs) was = oldObjs.length;
 
   for (const obj of objects) {
-    await safe_create(client, resourcesName, obj, pks, oldObjs ? oldObjs : []);
+    await safeCreate(client, resourcesName, obj, pks, oldObjs ? oldObjs : []);
   }
 
   const newObjs = await index(client, resourcesName);
@@ -19,16 +19,22 @@ export async function createObjects(client: AxiosInstance, resourcesName: string
 
   console.log(`Created ${now - was} ${resourcesName}. Was:${was} Now:${now}`);
   return newObjs?.reduce((acc, tObj) => {
-    const keys = [];
-    for (const pk of pks) {
-      if (pk.relation) {
-        keys.push(tObj.attributes[pk.key].data.id);
-      } else {
-        keys.push(tObj.attributes[pk.key]);
+    try {
+      const keys = [];
+      for (const pk of pks) {
+        if (pk.relation) {
+          keys.push(tObj.attributes[pk.key].data.id);
+        } else {
+          keys.push(tObj.attributes[pk.key]);
+        }
       }
+      const tKey = keys.join(":::");
+      acc[tKey] = tObj.id;
+      return acc;
+    } catch (err) {
+      console.log(err);
+      console.log(JSON.stringify(tObj));
+      return acc;
     }
-    const tKey = keys.join(":::");
-    acc[tKey] = tObj.id;
-    return acc;
   }, {});
 }
