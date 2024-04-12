@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-export function get_unique_domains(records: any[]) {
+export function getUniqueDomains(records: any[]) {
   const domains = [
     ...new Set(
       records.map((rec) => {
@@ -15,7 +15,7 @@ export function get_unique_domains(records: any[]) {
   });
 }
 
-export function get_unique_locations(records: any[]) {
+export function getUniqueLocations(records: any[]) {
   const gpss = [
     ...new Set(
       records.map((rec) => {
@@ -42,12 +42,18 @@ export function get_unique_locations(records: any[]) {
   });
 }
 
-export function get_unique_media(records: any[]) {
+export function getUniqueMedia(records: any[], providerRecords: any[]) {
   const images = [
     ...new Set(
-      records.flatMap((rec) => {
-        return [rec.Logo_image_url, rec.provider_Logo_image_url];
-      })
+      records
+        .map((rec) => {
+          return rec.Logo_image_url;
+        })
+        .concat(
+          providerRecords.map((rec) => {
+            return rec.provider_Logo_image_url;
+          })
+        )
     ),
   ].filter((e) => e);
   return images.map((image) => {
@@ -58,7 +64,7 @@ export function get_unique_media(records: any[]) {
   });
 }
 
-export function get_unique_categories(records: any[]) {
+export function getUniqueCategories(records: any[]) {
   const categoryNames = [
     ...new Set(
       records.map((rec) => {
@@ -75,7 +81,7 @@ export function get_unique_categories(records: any[]) {
   });
 }
 
-export function get_unique_tags(records: any[]) {
+export function getUniqueTags(records: any[]) {
   const tags = [
     ...new Set(
       records.flatMap((rec) => {
@@ -94,7 +100,7 @@ export function get_unique_tags(records: any[]) {
   });
 }
 
-export function get_unique_fulfillments(records: any[]) {
+export function getUniqueFulfillments(records: any[]) {
   const fulfillments = [
     ...new Set(
       records.flatMap((rec) => {
@@ -111,7 +117,7 @@ export function get_unique_fulfillments(records: any[]) {
   });
 }
 
-export function get_unique_providers(records: any[], domainsMap: any, locationsMap: any, mediaMap: any) {
+export function getUniqueProviders(records: any[], domainsMap: any, locationsMap: any, mediaMap: any) {
   const providerHashes = [
     ...new Set(
       records.map((rec) => {
@@ -134,17 +140,16 @@ export function get_unique_providers(records: any[], domainsMap: any, locationsM
   });
 }
 
-export function get_unique_items(records: any[], mediaMap: any, providersMap: any, locationsMap: any) {
+export function getUniqueItems(records: any[], mediaMap: any, providersMap: any) {
   const itemHashes = [
     ...new Set(
       records.map((rec) => {
-        return rec.Item_name + ":::" + rec.provider_name + ":::" + rec.gps;
+        return rec.Item_name + ":::" + rec.provider_name;
       })
     ),
   ].filter((e) => e);
   return itemHashes.map((itemHash) => {
-    const record = records.find((rec) => rec.Item_name + ":::" + rec.provider_name + ":::" + rec.gps === itemHash);
-    const providerKey = record.provider_name + ":::" + locationsMap[record.gps];
+    const record = records.find((rec) => rec.Item_name + ":::" + rec.provider_name === itemHash);
     return {
       name: record.Item_name,
       short_desc: record.short_desc,
@@ -153,24 +158,22 @@ export function get_unique_items(records: any[], mediaMap: any, providersMap: an
       max_quantity: record.max_quantity,
       min_quantity: record.min_quantity,
       image: [mediaMap[record.Logo_image_url]],
-      provider: providersMap[providerKey],
+      provider: providersMap[record.provider_name],
     };
   });
 }
 
-export function get_sc_products(records: any[], itemsMap: any, providersMap: any, locationsMap: any) {
+export function getUniqueSCRetailProducts(records: any[], itemsMap: any, providersMap: any) {
   const skuhashes = [
     ...new Set(
       records.map((rec) => {
-        return rec.sku + ":::" + rec.Item_name + ":::" + rec.provider_name + ":::" + rec.gps;
+        return rec.sku + ":::" + rec.Item_name + ":::" + rec.provider_name;
       })
     ),
   ].filter((e) => e);
   return skuhashes.map((skuhash) => {
-    const record = records.find(
-      (rec) => rec.sku + ":::" + rec.Item_name + ":::" + rec.provider_name + ":::" + rec.gps === skuhash
-    );
-    const providerKey = record.provider_name + ":::" + locationsMap[record.gps];
+    const record = records.find((rec) => rec.sku + ":::" + rec.Item_name + ":::" + rec.provider_name === skuhash);
+    const providerKey = record.provider_name;
     const itemKey = record.Item_name + ":::" + providersMap[providerKey];
     return {
       sku: record.sku,
@@ -183,17 +186,16 @@ export function get_sc_products(records: any[], itemsMap: any, providersMap: any
   });
 }
 
-export function get_cat_attr_tag_relations(
+export function getCatAttrTagRelations(
   records: any[],
   categoriesMap: any,
   tagsMap: any,
   itemsMap: any,
-  providersMap: any,
-  locationsMap: any
+  providersMap: any
 ) {
   return records.flatMap((record) => {
     const retVal = [];
-    const providerKey = record.provider_name + ":::" + locationsMap[record.gps];
+    const providerKey = record.provider_name;
     const providerId = providersMap[providerKey];
     const itemKey = record.Item_name + ":::" + providerId;
     const itemId = itemsMap[itemKey];
@@ -222,15 +224,17 @@ export function get_cat_attr_tag_relations(
 
 export function getItemFulfillments(
   records: any[],
+  providerRecords: any[],
   fulfillmentMaps: any,
   itemsMap: any,
   providersMap: any,
   locationsMap: any
 ) {
   return records.flatMap((record) => {
+    const providerRecord = providerRecords.find((r) => r.provider_name === record.provider_name);
     const retVal = [];
-    const locationId = locationsMap[record.gps];
-    const providerKey = record.provider_name + ":::" + locationId;
+    const locationId = locationsMap[providerRecord.gps];
+    const providerKey = record.provider_name;
     const providerId = providersMap[providerKey];
     const itemKey = record.Item_name + ":::" + providerId;
     const itemId = itemsMap[itemKey];
@@ -253,13 +257,39 @@ export function getItemFulfillments(
   });
 }
 
-export function print_duplicates(records: any[]) {
-  const keySet = new Set();
+function getDuplicates(records: any[], keys: any[]): any[] {
+  const valueSet = new Set();
   let index = 0;
+  const duplicates = [];
   for (const record of records) {
     index += 1;
-    const key = record.Item_name + ":::" + record.provider_name + ":::" + record.gps;
-    if (keySet.has(key)) console.log(`${index} ${JSON.stringify(record)}`);
-    else keySet.add(key);
+    let value = "";
+    if (keys.length === 1) {
+      value = record[keys[0]];
+    } else {
+      for (const key of keys) {
+        value += record[key];
+        value += " ";
+      }
+    }
+    if (valueSet.has(value)) duplicates.push(`Line:${index + 1} ${JSON.stringify(record)}`);
+    else valueSet.add(value);
   }
+  return duplicates;
+}
+
+export function hasDuplicates(providerRecords: any[], records: any[]) {
+  const providerDuplicates = getDuplicates(providerRecords, ["provider_name"]);
+  if (providerDuplicates.length > 0) {
+    console.log("Fix the following duplicates in the providers file");
+    console.log(JSON.stringify(providerDuplicates));
+    return true;
+  }
+  const itemDuplicates = getDuplicates(records, ["provider_name", "Item_name"]);
+  if (itemDuplicates.length > 0) {
+    console.log("Fix the following duplicates in the items file");
+    console.log(JSON.stringify(itemDuplicates));
+    return true;
+  }
+  return false;
 }

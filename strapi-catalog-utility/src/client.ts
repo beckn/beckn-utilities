@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export function axios_client() {
+export function axiosClient() {
   return axios.create({
     baseURL: process.env.STRAPI_API_SERVER,
     headers: {
