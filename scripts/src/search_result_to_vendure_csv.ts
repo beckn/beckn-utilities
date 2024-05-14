@@ -32,20 +32,28 @@ async function processFile(shopName: string, fileName: string) {
     const product = new Product();
     product.name = item.descriptor.name;
     product.description = item.descriptor.short_desc + " " + item.descriptor.long_desc;
-    product.assets = item.descriptor.images.join("|");
+    product.assets = item.descriptor.images?.join("|") || "";
     product.sku = shop.descriptor.name.substring(0, 2).toUpperCase() + Math.floor(Math.random() * 10000000);
     product.price = Number(item.price.listed_value);
     let facetString = "";
     const categories = [];
     const facets = new Map();
+    const tagnameSet = new Set();
     for (const tagname in item.tags) {
-      if (tagname.startsWith("fulfillment")) continue;
+      if (tagname.startsWith("fulfillment") || tagname === "imageUrl") continue;
+      if (tagnameSet.has(_capitalizeFirstLetter(tagname))) {
+        continue;
+      } else {
+        tagnameSet.add(_capitalizeFirstLetter(tagname));
+      }
       if (tagname.toLowerCase() === "category") {
         facetString += `category:${item.tags[tagname]}|`;
-      } else if (item.tags[tagname] === "Y" || item.tags[tagname] === "y") {
-        facetString += `category:${tagname}|`;
-      } else {
-        facetString += `${tagname}:${item.tags[tagname]}|`;
+      }
+      // else if (item.tags[tagname] === "Y" || item.tags[tagname] === "y") {
+      //   facetString += `category:${tagname}|`;
+      // }
+      else {
+        facetString += `${_capitalizeFirstLetter(tagname)}:${item.tags[tagname]}|`;
       }
     }
     if (facetString[facetString.length - 1] === "|") facetString = facetString.substring(0, facetString.length - 1);
@@ -65,6 +73,10 @@ function _findShop(responses: any[], shopName: string) {
   return null;
 }
 
+function _capitalizeFirstLetter(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 async function main() {
   if (process.argv.length < 5) {
     console.log(
@@ -77,11 +89,13 @@ async function main() {
   const fileName = process.argv[3];
   const opFileName = process.argv[4];
   console.log(`Processing items for shop ${shopName} from ${fileName}`);
-  const products = await processFile(shopName, fileName);
+  let products = await processFile(shopName, fileName);
   if (products.length === 0) {
     console.log("Could not find items in the specified shop");
     process.exit(0);
   }
+  // products = products.slice(0, 8);
+  // console.log(JSON.stringify(products, null, 2));
 
   const csvWriter = createObjectCsvWriter({
     path: opFileName,

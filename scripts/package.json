@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "npx nodemon -- src/search_result_to_vendure_csv.ts WorldHikes worldhikes.json worldhikes.csv",
+    "dev": "npx nodemon -- src/search_result_to_vendure_csv.ts",
     "lint": "eslint . --ext .ts",
     "build": "rimraf ./build && tsc",
-    "start": "npm run build && node build/search_result_to_vendure_csv.js  WorldHikes worldhikes.json worldhikes.csv"
+    "start": "npm run build && node build/search_result_to_vendure_csv.js"
   },
   "keywords": [],
   "author": "",
