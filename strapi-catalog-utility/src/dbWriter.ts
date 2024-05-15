@@ -9,6 +9,7 @@ export async function createObjects(client: AxiosInstance, resourcesName: string
 
   const oldObjs = await index(client, resourcesName);
   if (oldObjs) was = oldObjs.length;
+  console.log(`Index action for ${resourcesName} returned ${was} objects`);
 
   for (const obj of objects) {
     await safeCreate(client, resourcesName, obj, pks, oldObjs ? oldObjs : []);
@@ -23,7 +24,7 @@ export async function createObjects(client: AxiosInstance, resourcesName: string
       const keys = [];
       for (const pk of pks) {
         if (pk.relation) {
-          keys.push(tObj.attributes[pk.key].data.id);
+          keys.push(tObj.attributes[pk.key].data?.id);
         } else {
           keys.push(tObj.attributes[pk.key]);
         }
