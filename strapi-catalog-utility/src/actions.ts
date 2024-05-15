@@ -38,7 +38,7 @@ export async function safeCreate(
         for (const pk of pks) {
           let curr_result = false;
           if (pk.relation) {
-            curr_result = obj.attributes[pk.key].data.id === data[pk.key];
+            curr_result = obj.attributes[pk.key].data?.id === data[pk.key];
           } else {
             curr_result = obj.attributes[pk.key] === data[pk.key];
           }
@@ -74,6 +74,8 @@ function getIndexString(resources: string) {
   switch (resources) {
     case "Items":
       return `/api/items?populate[0]=image&populate[1]=provider`;
+    case "Providers":
+      return `/api/Providers?populate[0]=domain_id&populate[1]=logo&populate[2]=location_id&populate[3]=category_ids&populate[4]=fulfillments&populate[5]=items`;
     case "fulfilments":
       return `/api/fulfilments?`;
 

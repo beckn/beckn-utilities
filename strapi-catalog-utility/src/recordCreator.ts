@@ -231,29 +231,35 @@ export function getItemFulfillments(
   locationsMap: any
 ) {
   return records.flatMap((record) => {
-    const providerRecord = providerRecords.find((r) => r.provider_name === record.provider_name);
-    const retVal = [];
-    const locationId = locationsMap[providerRecord.gps];
-    const providerKey = record.provider_name;
-    const providerId = providersMap[providerKey];
-    const itemKey = record.Item_name + ":::" + providerId;
-    const itemId = itemsMap[itemKey];
-    let fulfillmentNames = record.fulfillments.split(",");
-    fulfillmentNames = fulfillmentNames.map((name: string) => name.trim());
-    for (const fulfillmentName of fulfillmentNames) {
-      const fulfillmentId = fulfillmentMaps[fulfillmentName];
-      //HARDCODED DATA
-      let timestamp = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
-      if (fulfillmentName === "CHECK-OUT") timestamp = new Date(new Date().setFullYear(new Date().getFullYear() + 5));
+    try {
+      const providerRecord = providerRecords.find((r) => r.provider_name === record.provider_name);
+      const retVal = [];
+      const locationId = locationsMap[providerRecord.gps];
+      const providerKey = record.provider_name;
+      const providerId = providersMap[providerKey];
+      const itemKey = record.Item_name + ":::" + providerId;
+      const itemId = itemsMap[itemKey];
+      let fulfillmentNames = record.fulfillments.split(",");
+      fulfillmentNames = fulfillmentNames.map((name: string) => name.trim());
+      for (const fulfillmentName of fulfillmentNames) {
+        const fulfillmentId = fulfillmentMaps[fulfillmentName];
+        //HARDCODED DATA
+        let timestamp = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+        if (fulfillmentName === "CHECK-OUT") timestamp = new Date(new Date().setFullYear(new Date().getFullYear() + 5));
 
-      retVal.push({
-        item_id: itemId,
-        fulfilment_id: fulfillmentId,
-        location_id: locationId,
-        timestamp: timestamp,
-      });
+        retVal.push({
+          item_id: itemId,
+          fulfilment_id: fulfillmentId,
+          location_id: locationId,
+          timestamp: timestamp,
+        });
+      }
+      return retVal;
+    } catch (err: any) {
+      console.log(err.message);
+      console.log(record);
+      throw err;
     }
-    return retVal;
   });
 }
 
