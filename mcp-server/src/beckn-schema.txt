@@ -1,0 +1,1433 @@
+Beckn Protocol Schema
+Overview
+The schema of beckn protocol is an abstract set of JSON Schema classes
+The schema is industry-sector agnostic, meaning, the schema can be mapped to any entity involved in an economic transaction across any domain. 
+Each represents a unique entity that is involved at one or more stages of an order lifecycle
+There are various categories of schema in beckn protocol namely
+Low level schema
+Mid-level schema
+Higher-level schema
+The low-level schemas are composed of primitive data types that are specified by the JSON Schema specification like string, number, integer, boolean etc.
+The mid-level schemas have properties that reference low level schema
+The high-level schemas have properties that are composed of primitive data types, low-level and mid-level schema
+The schemas cannot be extended by any implementation. Beckn protocol imposes strict adherence to the schema. Any extension to the schema must be done only through the formal governance mechanism of beckn protocol. 
+Note:
+None of the schemas are specific to any particular industry sector although there could be exceptions to this rule. For example: Vehicle is a schema that is usually involved in sectors involving mobility or logistics, but since it is such a commonly used entity, it has been added to the core schema. It may be changed later to something more generic, like “Carrier” but it has NOT happened so far. 
+Schema List
+The following list contains all the schemas supported by beckn protocol
+Ack
+AddOn
+Address
+Agent
+Authorization
+Billing
+Cancellation
+CancellationTerm
+Catalog
+Category
+Circle
+City
+Contact
+Context
+Country
+Credential
+Customer
+DecimalValue
+Descriptor
+Document (Not in spec repo)
+Domain
+Duration
+Error
+Fee
+Form
+FormResponse
+Fulfillment
+FulfillmentState
+Gps
+Image
+Intent
+Item
+ItemQuantity
+Language
+Location
+MediaFile
+Offer
+Option
+Order
+Organization
+Payment
+Person
+Price
+Provider
+Policy (Not in spec repo)
+Quotation
+Rating
+RefundTerm
+Region
+ReplacementTerm
+ReturnTerm
+Scalar
+Schedule
+Skill
+State
+Stop
+Subscriber
+Subscription
+Support
+Tag
+TagGroup
+Time
+TimeToLive
+Time
+Tracking
+Vehicle
+XInput
+
+Schema Definitions
+Ack
+Description
+Describes the acknowledgement sent in response to an API call. If the implementation uses HTTP/S, then Ack must be returned in the same session with a 200 OK response code.
+
+Every call to a Beckn Protocol API must be responded to with an Ack, whether or not the receiver intends to respond with a follow up API call (or callback in case of BPPs). 
+
+This has one property called status that indicates the status of the Acknowledgement.
+
+An acknowledgement object in a response to a request does NOT necessarily mean that the response is positively acknowledged. To know the status of an acknowledgment, the requester MUST check the status attribute of the Ack object.
+Property List
+status
+Type: string
+Description: The status of the acknowledgement. If the request passes the validation criteria of the BPP, then this is set to ACK. If a BPP responds with status = ACK to a request, it is required to respond with a callback. If the request fails the validation criteria, then this is set to NACK. Additionally, if a BPP does not intend to respond with a callback even after the request meets the validation criteria, it should set this value to NACK.
+Enum:
+ACK
+NACK
+tags
+Type: Array of TagGroup
+Description: A list of tags containing any additional information sent along with the Acknowledgement.
+For more details on the TagGroup schema, visit the section titled, TagGroup.
+Example Use Cases
+Example 1: Compliant Beckn Protocol Search Request and ACK Response
+Search Request (Compliant):
+
+{
+  "context": {
+    "domain": "retail",
+    "country": "IN",
+    "city": "Bangalore",
+    "action": "search",
+    "core_version": "1.0.0",
+    "bap_id": "buyer-app.example.com",
+    "bap_uri": "https://buyer-app.example.com",
+    "transaction_id": "1234567890",
+    "message_id": "0987654321",
+    "timestamp": "2024-11-13T09:00:00Z"
+  },
+  "message": {
+    "intent": {
+      "item": {
+        "descriptor": {
+          "name": "laptop"
+        }
+      }
+    }
+  }
+}
+
+ACK Response:
+
+{
+  "status": "ACK",
+}
+Example 2: Non-Compliant Beckn Protocol Search Request and NACK Response
+Search Request (Non-Compliant): In this request the transaction_id is missing in the request which leads to a NACK
+
+{
+  "context": {
+    "domain": "retail",
+    "country": "IN",
+    "action": "search",
+    "core_version": "1.0.0",
+    "bap_id": "buyer-app.example.com",
+    "bap_uri": "https://buyer-app.example.com",
+    "message_id": "0987654321",
+    "timestamp": "2024-11-13T09:00:00Z"
+  },
+  "message": {
+    "intent": {
+      "item": {
+        "descriptor": {
+          "name": "laptop"
+        }
+      }
+    }
+  }
+}
+
+ACK Response:
+
+{
+  "status": "NACK"
+}
+
+AddOn
+Description
+Describes an additional item offered as a value-addition to a product or service. This does not exist independently in a catalog and is always associated with an item.
+
+Property List
+id
+Type: string
+Description: Provider-defined ID of the add-on
+descriptor
+Type: Descriptor
+Description: Detailed information about the add-on.
+For more details on the Descriptor schema, visit the section titled, Descriptor.
+price
+Type: Price
+Description: The price details of the add-on.
+For more details on the Price schema, visit the section titled, Price.
+Example Use Cases
+Example 1: AddOn Definition for a Warranty Extension
+An electronics provider offers a 1-year warranty extension as an add-on for a laptop. The add-on is represented with a unique ID, a descriptor detailing the warranty, and price information.
+
+AddOn Object:
+
+{
+  "id": "warranty_extension_1yr",
+  "descriptor": {
+    "name": "1-Year Warranty Extension",
+    "description": "Extends the standard warranty by an additional year."
+  },
+  "price": {
+    "currency": "INR",
+    "value": "2000"
+  }
+}
+Example 2: AddOn Definition for a Gift Wrapping Service
+A gift store provides a gift-wrapping service as an add-on. The add-on includes a unique ID, descriptor information describing the wrapping style, and a price.
+
+AddOn Object:
+
+{
+  "id": "gift_wrap_basic",
+  "descriptor": {
+    "name": "Gift Wrapping",
+    "description": "Premium wrapping service with decorative paper and ribbon."
+  },
+  "price": {
+    "currency": "INR",
+    "value": "150"
+  }
+}
+
+
+
+Address
+Description
+Describes a postal address.
+Property List
+Address
+Type: string
+Description: The full postal address represented as a single string.
+Example Use Cases
+Example 1: Address for a Residential Location
+An individual’s residential address is represented in a single string format.
+
+Address Object:
+
+"1234, Park Avenue, Apt. 5B, New York, NY, 10001, USA"
+Example 2: Address for a Business Location
+A business address represented as a single string format.
+
+Address Object:
+
+"1 Infinite Loop, Cupertino, CA, 95014, USA"
+Agent
+Description
+The Agent schema describes the direct performer, driver, or executor that fulfills an order. This can be a person or, in rare cases, a non-living entity like a drone or bot. Agents are critical for fulfillment in domains such as logistics, mobility, and healthcare. Depending on the domain, the agent could represent a doctor, driver, delivery personnel, or even an automated mechanism such as a robotic system.
+Properties
+person:
+
+Type: Object
+Description: Details of the person performing the service.
+Schema Reference: [Person Schema]
+
+contact:
+
+Type: Object
+Description: Contact details of the agent, including phone and email.
+Schema Reference: [Contact Schema]
+
+organization:
+
+Type: Object
+Description: Organization the agent is associated with.
+Schema Reference: [Organization Schema]
+
+rating:
+
+Type: Number
+Description: Rating of the agent, if applicable, based on previous transactions or feedback.
+Range: 0 to 5
+Implementation Guide
+Defining the Agent:
+
+Include the person object when identifying a specific individual fulfilling the order.
+Use the contact object to provide necessary communication details, ensuring real-time updates or troubleshooting during fulfillment.
+Include organization if the agent operates as part of a larger entity or business.
+Provide rating if historical data exists for the agent's performance in fulfillment-related activities.
+
+Optional Fields:
+
+All the fields in the Agent schema are optional. The implementing application can set the attributes it has and leave the rest. For example, if a provider has partnered with a specific delivery agency, it can set the organization field only. As the order lifecycle progresses, it can add more fields like the person, contact, rating etc. 
+
+Contextual Use:
+
+For healthcare, the agent could represent a doctor or technician.
+In logistics, the agent might be a delivery person or a driver.
+For automated systems, populate the person field minimally or provide a descriptive identifier.
+
+API usage:
+During search, a BAP can to specify the rating of the driver they want
+During search, a BAP can set the rating field of the object to specify the name of the doctor
+During select and init, a BAP can set this object to specify which provider their user wants fulfilling the order
+During select and init a BAP can set this object to specify their user’s fulfillment preferences. For example, a user may want a specific doctor, nurse, or driver
+During on_search, a BPP can specify details of the Agent that may fulfill the order. This is useful generally in healthcare use cases when the details of the doctor may be needed before booking an appointment
+During on_select and on_init, a BPP can specify details of the Agent that will fulfill the order even before booking. This is done when the agent is known before the order is created. This may not be applicable in on-demand use cases like ride hailing, but may be useful in healthcare use cases. 
+During update, a BAP can update the details of the agent they want fulfilling the order
+During on_update, a BPP can update the details of the agent when say the original agent cancels due to some reason
+Examples
+Example 1: A delivery driver for a logistics order
+{
+  "person": {
+    "id": "driver_123",
+    "name": "John Doe",
+    "image": {
+      "url": "https://example.com/images/johndoe.jpg",
+      "size_type": "md"
+    },
+    "dob": "1985-07-15",
+    "gender": "Male",
+    "languages": [
+      { "code": "en", "name": "English" },
+      { "code": "es", "name": "Spanish" }
+    ],
+    "skills": [
+      { "code": "driving", "name": "Driving" },
+      { "code": "logistics", "name": "Logistics Management" }
+    ]
+  },
+  "contact": {
+    "phone": "+1234567890",
+    "email": "john.doe@example.com",
+    "jcard": {
+      "fn": "John Doe",
+      "tel": "+1234567890",
+      "email": "john.doe@example.com"
+    }
+  },
+  "rating": 4.5
+}
+
+
+Example 2: A robotic drone used in package delivery
+{
+  "person": {
+    "id": "drone_001",
+    "name": "Delivery Drone X",
+    "image": {
+      "url": "https://example.com/images/drone.jpg",
+      "size_type": "lg"
+    },
+    "skills": [
+      { "code": "aerial_delivery", "name": "Aerial Delivery" },
+      { "code": "autonomous_navigation", "name": "Autonomous Navigation" }
+    ]
+  },
+  "organization": {
+    "descriptor": {
+      "name": "Drone Delivery Corp",
+      "code": "DRONE_CORP",
+      "short_desc": "Leaders in automated drone logistics",
+      "long_desc": "Providing cutting-edge drone-based delivery solutions to ensure timely and efficient logistics."
+    },
+    "address": "123 Drone Street, Drone City, DC 45678",
+    "contact": {
+      "phone": "+19876543210",
+      "email": "support@dronecorp.com"
+    }
+  }
+}
+
+
+Example 3: A healthcare professional fulfilling a lab test
+{
+  "person": {
+    "id": "doctor_789",
+    "name": "Dr. Jane Smith",
+    "image": {
+      "url": "https://example.com/images/janesmith.jpg",
+      "size_type": "sm"
+    },
+    "dob": "1978-09-30",
+    "gender": "Female",
+    "languages": [
+      { "code": "en", "name": "English" },
+      { "code": "fr", "name": "French" }
+    ],
+    "skills": [
+      { "code": "pathology", "name": "Pathology" },
+      { "code": "diagnostics", "name": "Diagnostics" }
+    ],
+    "creds": [
+      {
+        "id": "credential_123",
+        "type": "VerifiableCredential",
+        "url": "https://example.com/credentials/doctor123.pdf"
+      }
+    ]
+  },
+  "organization": {
+    "descriptor": {
+      "name": "City Health Clinic",
+      "code": "CHC",
+      "short_desc": "Comprehensive healthcare services",
+      "long_desc": "Offering healthcare services including diagnostics, pathology, and outpatient treatments."
+    },
+    "address": "456 Medical Lane, Health City, HC 78901",
+    "contact": {
+      "phone": "+11234567890",
+      "email": "contact@cityhealthclinic.com"
+    }
+  },
+  "contact": {
+    "phone": "+9876543210",
+    "email": "jane.smith@hospital.org",
+    "jcard": {
+      "fn": "Dr. Jane Smith",
+      "tel": "+9876543210",
+      "email": "jane.smith@hospital.org"
+    }
+  },
+  "rating": 4.9
+}
+
+These examples are crafted to strictly conform to the Person, Organization, and Contact schema specifications, ensuring completeness and adherence to the Beckn Protocol standards.
+
+Authorization Schema
+Description
+The Authorization schema defines mechanisms used to grant permissions for initiating, continuing, or completing a service. It ensures secure, validated operations through tokens or credentials in various fulfillment scenarios.
+
+
+Properties
+type:
+
+Type: String
+Description: The type of authorization mechanism used, such as OTP, QR code, or OAuth.
+Allowed Values: Defined by the network policy.
+
+token:
+
+Type: String
+Description: The authorization token or credential provided to validate an action.
+
+valid_from:
+
+Type: String
+Format: Date-time (RFC 3339)
+Description: Timestamp when the authorization becomes valid.
+
+valid_to:
+
+Type: String
+Format: Date-time (RFC 3339)
+Description: Timestamp when the authorization expires.
+
+status:
+
+Type: String
+Description: Indicates the current status of the token (e.g., active, expired, revoked).
+
+
+Implementation Guide
+
+1. Defining the Authorization Object
+
+Always specify the type and token to define the method of authorization and its associated credential.
+Use valid_from and valid_to to enforce strict validity periods for enhanced security.
+Include status to track the lifecycle of the token.
+
+2. Optional Fields
+
+Fields like valid_from and valid_to can be excluded for tokens without temporal restrictions, though this is discouraged for sensitive use cases.
+
+3. Contextual Usage
+
+Ride-hailing: Use OTP for starting or ending a trip.
+Healthcare: Generate a secure video consultation link as a token.
+Logistics: Provide QR codes for secure package retrieval.
+OAuth Login: Facilitate user authentication via third-party platforms.
+
+4. API Usage
+
+During select and init: BAP can request the type of authorization preferred by users.
+During on_init: BPP can provide the generated token for users to authorize fulfillment.
+During update and on_update: Update authorization details if a token expires or fulfillment needs adjustment.
+During status and on_status: Notify users of token usage for fulfillment progress.
+
+
+Examples
+
+1. OTP to Start a Service
+
+{
+  "type": "start-otp",
+  "token": "543210",
+  "valid_from": "2024-12-30T10:00:00Z",
+  "valid_to": "2024-12-30T10:30:00Z",
+  "status": "active"
+}
+
+2. OTP to End a Service
+
+{
+  "type": "end-otp",
+  "token": "123456",
+  "valid_from": "2024-12-30T12:00:00Z",
+  "valid_to": "2024-12-30T12:30:00Z",
+  "status": "active"
+}
+
+Examples with Deeplink URLs
+
+3. Authenticator App
+
+{
+  "type": "authenticator_app",
+  "token": "myapp://authenticator?token=ABCD-1234-EFGH-5678",
+  "valid_from": "2024-12-30T09:00:00Z",
+  "valid_to": "2024-12-30T09:15:00Z",
+  "status": "active"
+}
+
+
+4. OAuth Login
+
+{
+  "type": "oauth",
+  "token": "https://auth.example.com/oauth?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+  "valid_from": "2024-12-30T08:00:00Z",
+  "valid_to": "2024-12-30T16:00:00Z",
+  "status": "active"
+}
+
+3. Authenticator App with Deeplink
+{
+  "type": "authenticator_app",
+  "token": "ABCD-1234-EFGH-5678",
+  "valid_from": "2024-12-30T09:00:00Z",
+  "valid_to": "2024-12-30T09:15:00Z",
+  "status": "active",
+  "deeplink_url": "myapp://authenticator?token=ABCD-1234-EFGH-5678"
+}
+
+Implementation Guide for Deeplink based authorization
+
+Structure:
+
+For web-based links, use HTTPS URLs pointing to the specific resource or action.
+For app-based links, use a custom URI scheme like myapp://.
+
+Parameters:
+
+Use the token parameter to send the url
+
+App Handling:
+
+Ensure the application can parse the deeplink and execute the intended action, such as preloading a form or triggering validation.
+
+Billing Schema
+Description
+The Billing schema defines the details related to billing for an order or service. It encompasses information about the billable entity, their contact information, and relevant tax or billing details. This schema ensures that billing data is structured, complete, and compliant with taxation or organizational requirements.
+
+
+Properties
+name:
+
+Type: String
+Description: The name of the individual or organization being billed.
+
+organization:
+
+Type: Object
+Description: Details about the organization being billed.
+Schema Reference: [Organization Schema]
+
+address:
+
+Type: String
+Description: The postal address of the billable entity.
+
+state:
+
+Type: Object
+Description: The state where the billable entity resides.
+Schema Reference: [State Schema]
+
+city:
+
+Type: Object
+Description: The city where the billable entity resides.
+Schema Reference: [City Schema]
+
+email:
+
+Type: String
+Format: Email
+Description: Email address for sending the bill or invoice.
+
+phone:
+
+Type: String
+Description: Phone number of the billable entity.
+
+time:
+
+Type: Object
+Description: Details about the billing time or period.
+Schema Reference: [Time Schema]
+
+tax_id:
+
+Type: String
+Description: Tax identification number of the billable entity.
+
+created_at:
+
+Type: String
+Format: Date-time (RFC 3339)
+Description: Timestamp when the billing record was created.
+
+updated_at:
+
+Type: String
+Format: Date-time (RFC 3339)
+Description: Timestamp when the billing record was last updated.
+
+
+Implementation Guide
+1. Defining the Billing Object
+
+The name, address, email, and phone fields should always be included to ensure complete billing information.
+Add the organization object when billing an entity rather than an individual.
+Use tax_id for tax compliance and tracking purposes.
+
+2. Optional Fields
+
+Fields like state, city, and time can be omitted if not region-specific.
+created_at and updated_at are typically managed by the system and do not need manual entry.
+
+3. Contextual Usage
+
+Retail Orders: Specify the billing details for the customer making the purchase.
+Healthcare: Include patient or organization billing information for treatments or consultations.
+B2B Transactions: Use the organization and tax_id fields for corporate invoicing.
+
+4. API Usage
+
+During init: A BAP sends the billing details to the BPP for finalizing the order.
+During on_init: A BPP may return the finalized billing information, including any applied taxes or fees.
+During update: The BAP can update billing details, such as correcting the tax ID or contact information.
+During on_update: The BPP can reflect changes to the billing details, such as modifications in taxation or time of service.
+
+
+Examples
+Example 1: Billing an individual
+
+{
+  "name": "John Doe",
+  "address": "123 Elm Street, Springfield",
+  "state": {
+    "name": "Illinois",
+    "code": "IL"
+  },
+  "city": {
+    "name": "Springfield",
+    "code": "SPR"
+  },
+  "email": "john.doe@example.com",
+  "phone": "+1234567890",
+  "tax_id": "TAX123456",
+  "created_at": "2024-12-30T10:00:00Z",
+  "updated_at": "2024-12-30T12:00:00Z"
+}
+
+Example 2: Billing an organization
+
+{
+  "name": "ABC Corporation",
+  "organization": {
+    "descriptor": {
+      "name": "ABC Corporation",
+      "short_desc": "Global Supply Chain",
+      "long_desc": "A multinational corporation specializing in logistics and supply chain management."
+    },
+    "address": "456 Corporate Blvd, Metropolis",
+    "state": {
+      "name": "California",
+      "code": "CA"
+    },
+    "city": {
+      "name": "Metropolis",
+      "code": "MET"
+    },
+    "contact": {
+      "phone": "+19876543210",
+      "email": "contact@abc.com"
+    }
+  },
+  "email": "billing@abc.com",
+  "phone": "+19876543210",
+  "tax_id": "TAX987654",
+  "created_at": "2024-12-30T09:00:00Z",
+  "updated_at": "2024-12-30T11:00:00Z"
+}
+
+Example 3: Minimal billing details
+
+{
+  "name": "Jane Smith",
+  "email": "jane.smith@example.com",
+  "phone": "+11234567890",
+  "tax_id": "TAX123456789"
+}
+
+Cancellation Schema
+Description
+The Cancellation schema describes the details of a cancellation event, including the reason for cancellation, the entity initiating it, and any additional information related to the cancellation. It ensures proper handling and logging of cancellation requests in various transactional workflows, adhering to predefined terms and conditions.
+
+
+Properties
+time:
+
+Type: String
+Format: Date-time (RFC 3339)
+Description: The timestamp indicating when the order was canceled.
+
+cancelled_by:
+
+Type: String
+Description: Specifies the entity responsible for the cancellation.
+Allowed Values:
+CONSUMER: The end-user or buyer initiated the cancellation.
+PROVIDER: The seller, service provider, or their agent initiated the cancellation.
+
+reason:
+
+Type: Object
+Description: The reason for cancellation.
+Schema Reference: [Option Schema]
+
+additional_description:
+
+Type: Object
+Description: Any additional information or notes regarding the nature of the cancellation.
+Schema Reference: [Descriptor Schema]
+
+
+Implementation Guide
+1. Defining the Cancellation Object
+
+Use the time field to capture the precise moment of cancellation.
+Specify cancelled_by to attribute responsibility for the cancellation.
+Include reason to ensure clarity on the cause of cancellation.
+
+2. Optional Fields
+
+Use additional_description to provide more context about the cancellation, especially for complex scenarios or disputes.
+
+3. Contextual Usage
+
+Retail: Capture the reason for a customer-initiated return or order cancellation.
+Mobility: Log when a ride is canceled, either by the rider or the driver.
+Healthcare: Document the cancellation of appointments, specifying if the patient or the provider initiated it.
+
+4. API Usage
+
+During cancel: A BAP sends cancellation details to the BPP, including who initiated the cancellation and why.
+During on_cancel: A BPP provides an updated order state, reflecting the cancellation and associated details.
+During update and on_update: If cancellation terms change (e.g., penalty adjustments), these endpoints can be used to reflect updates.
+
+
+Examples
+Example 1: Consumer-initiated cancellation
+
+{
+  "time": "2024-12-30T10:00:00Z",
+  "cancelled_by": "CONSUMER",
+  "reason": {
+    "id": "REASON001",
+    "descriptor": {
+      "name": "Change of mind",
+      "short_desc": "The consumer decided not to proceed."
+    }
+  },
+  "additional_description": {
+    "short_desc": "No additional charges applicable for this cancellation."
+  }
+}
+
+Example 2: Provider-initiated cancellation
+
+{
+  "time": "2024-12-30T12:30:00Z",
+  "cancelled_by": "PROVIDER",
+  "reason": {
+    "id": "REASON002",
+    "descriptor": {
+      "name": "Unavailable inventory",
+      "short_desc": "The requested item is out of stock."
+    }
+  },
+  "additional_description": {
+    "short_desc": "Full refund will be processed within 3 business days."
+  }
+}
+
+Example 3: Cancellation with minimal details
+
+{
+  "time": "2024-12-30T15:00:00Z",
+  "cancelled_by": "CONSUMER",
+  "reason": {
+    "id": "REASON003",
+    "descriptor": {
+      "name": "Service delay"
+    }
+  }
+}
+
+CancellationTerm Schema
+Description
+The CancellationTerm schema defines the conditions and rules under which an order or item can be canceled. It includes details about the applicable fulfillment state, requirements for cancellation reasons, time limits, and any associated fees. This schema ensures clear communication of cancellation policies and promotes transparency between consumers and providers.
+
+
+Properties
+fulfillment_state:
+
+Type: Object
+Description: Specifies the state of fulfillment during which the cancellation term is applicable.
+Schema Reference: [FulfillmentState Schema]
+
+reason_required:
+
+Type: Boolean
+Description: Indicates whether providing a reason is mandatory for cancellation.
+
+cancel_by:
+
+Type: Object
+Description: Details the time constraints for cancellation.
+Schema Reference: [Time Schema]
+
+cancellation_fee:
+
+Type: Object
+Description: Defines any fees applicable for cancellation.
+Schema Reference: [Fee Schema]
+
+xinput:
+
+Type: Object
+Description: Additional input required from the customer to process the cancellation.
+Schema Reference: [XInput Schema]
+
+external_ref:
+
+Type: Object
+Description: Links to external documents or policies related to the cancellation terms.
+Schema Reference: [MediaFile Schema]
+
+
+Implementation Guide
+1. Defining the CancellationTerm Object
+
+Specify fulfillment_state to define the conditions during which the cancellation term is valid.
+Use reason_required to enforce or relax the requirement for customers to provide a cancellation reason.
+Include cancel_by to set time limits for initiating cancellations.
+
+2. Optional Fields
+
+cancellation_fee is optional and can be included for orders that incur penalties upon cancellation.
+xinput can be used for additional details, such as customer acknowledgments or reason descriptions.
+external_ref is useful for linking detailed cancellation policies or terms hosted externally.
+
+3. Contextual Usage
+
+E-commerce: Specify cancellation terms for items based on fulfillment states, such as before dispatch or after delivery.
+Mobility: Define penalties for ride cancellations at different stages, such as before or after driver assignment.
+Healthcare: Set cancellation policies for appointments, including time limits and penalties.
+
+4. API Usage
+
+During init: The BPP may return applicable cancellation terms for the items or services being confirmed.
+During on_init: The BPP communicates cancellation terms alongside the order confirmation.
+During update: The BAP can update cancellation terms based on customer requests.
+During on_update: The BPP reflects changes to cancellation terms, such as updated fees or time limits.
+
+
+Examples
+Example 1: Cancellation without penalties
+
+{
+  "fulfillment_state": {
+    "descriptor": {
+      "name": "Before Dispatch"
+    }
+  },
+  "reason_required": true,
+  "cancel_by": {
+    "range": {
+      "start": "2024-12-30T10:00:00Z",
+      "end": "2024-12-30T14:00:00Z"
+    }
+  }
+}
+
+Example 2: Cancellation with fees
+
+{
+  "fulfillment_state": {
+    "descriptor": {
+      "name": "After Dispatch"
+    }
+  },
+  "reason_required": true,
+  "cancel_by": {
+    "range": {
+      "start": "2024-12-30T10:00:00Z",
+      "end": "2024-12-30T16:00:00Z"
+    }
+  },
+  "cancellation_fee": {
+    "percentage": "10",
+    "amount": {
+      "currency": "USD",
+      "value": "5.00"
+    }
+  }
+}
+
+Example 3: Cancellation with external references
+
+{
+  "fulfillment_state": {
+    "descriptor": {
+      "name": "Before Appointment"
+    }
+  },
+  "reason_required": false,
+  "cancel_by": {
+    "range": {
+      "start": "2024-12-30T08:00:00Z",
+      "end": "2024-12-30T10:00:00Z"
+    }
+  },
+  "external_ref": {
+    "url": "https://example.com/policies/cancellation",
+    "mimetype": "text/html"
+  }
+}
+
+Catalog Schema
+Description
+The Catalog schema is one of the most critical components of the Beckn Protocol. It represents the set of products, services, and associated metadata offered by a provider platform (BPP) to a consumer platform (BAP). The catalog is designed to encapsulate a wide variety of information, ranging from the items or services available for selection to fulfillment, payment, and offer details. It is central to enabling discovery, selection, and transaction workflows within the Beckn network.
+
+The Catalog schema is highly extensible, supporting hierarchical structures, caching mechanisms, and detailed configurations that enable seamless interoperability across diverse industries like mobility, healthcare, logistics, and retail.
+
+
+Properties
+descriptor:
+
+Type: Object
+Description: A physical or textual description of the catalog.
+Schema Reference: [Descriptor Schema]
+Usage: Provides a human-readable summary, such as the catalog's name, short description, or associated media.
+
+fulfillments:
+
+Type: Array of Objects
+Description: Specifies the fulfillment modes offered at the catalog level.
+Schema Reference: [Fulfillment Schema]
+Usage: Indicates methods like home delivery, pickup, or teleconsultation provided across all items in the catalog.
+
+payments:
+
+Type: Array of Objects
+Description: Lists the payment terms and methods supported for transactions.
+Schema Reference: [Payment Schema]
+Usage: Configures payment options such as prepaid, postpaid, or pay-on-delivery.
+
+offers:
+
+Type: Array of Objects
+Description: Contains promotional offers or discounts applicable to the catalog.
+Schema Reference: [Offer Schema]
+Usage: Enables BPPs to incentivize purchases or service bookings.
+
+providers:
+
+Type: Array of Objects
+Description: Lists the providers or businesses offering items or services within the catalog.
+Schema Reference: [Provider Schema]
+Usage: Contains key provider details, including items, fulfillment capabilities, and specific offers.
+
+exp:
+
+Type: String
+Format: Date-time (RFC 3339)
+Description: The expiration timestamp for the catalog.
+Usage: Specifies when the catalog will no longer be valid or available.
+
+ttl:
+
+Type: String
+Format: ISO 8601 Duration
+Description: The time-to-live for the catalog in seconds.
+Usage: Indicates how long the catalog can be cached by the BAP.
+
+
+Implementation Guide
+1. Defining the Catalog Object
+
+Use the descriptor field to describe the catalog's purpose and scope clearly.
+Include fulfillments, payments, and offers to detail cross-item capabilities and terms.
+Populate the providers array to list specific entities offering products or services, each linked to their unique catalogs.
+
+2. Optional Fields
+
+Use exp to define a strict expiration date, especially for time-sensitive catalogs.
+Use ttl for less rigid expiration control, enabling cached access for a defined period.
+
+3. Contextual Usage
+
+Retail: Represent items grouped under categories with hierarchical structures and associated offers.
+Mobility: Showcase vehicle types, routes, and schedules available for booking.
+Healthcare: Highlight available doctors, consultation types, and time slots.
+Logistics: Provide delivery options, pricing, and fulfillment terms for shipments.
+
+4. API Usage
+
+During on_search: The BPP sends the catalog to the BAP as a response to a search request.
+Caching: BAPs can cache catalogs based on the ttl or exp fields for enhanced performance.
+During update: Updates to the catalog can be made dynamically for pricing, availability, or fulfillment changes.
+
+
+Examples
+Example 1: Basic Catalog with Fulfillments and Providers
+
+{
+  "descriptor": {
+    "name": "Retail Catalog",
+    "short_desc": "Catalog of electronic items",
+    "long_desc": "Explore a wide range of electronics, including mobiles, laptops, and accessories.",
+    "media": [
+      {
+        "url": "https://example.com/catalog-banner.jpg",
+        "mimetype": "image/jpeg"
+      }
+    ]
+  },
+  "fulfillments": [
+    {
+      "type": "home_delivery",
+      "rateable": true,
+      "tracking": true
+    }
+  ],
+  "payments": [
+    {
+      "type": "PRE-ORDER",
+      "collected_by": "bpp",
+      "url": "https://example.com/payment"
+    }
+  ],
+  "offers": [
+    {
+      "id": "offer_123",
+      "descriptor": {
+        "name": "10% Discount",
+        "short_desc": "Get 10% off on all electronics."
+      }
+    }
+  ],
+  "providers": [
+    {
+      "id": "provider_001",
+      "descriptor": {
+        "name": "ElectroMart",
+        "short_desc": "Your go-to store for electronics"
+      },
+      "items": [
+        {
+          "id": "item_001",
+          "descriptor": {
+            "name": "Smartphone",
+            "short_desc": "Latest model with advanced features"
+          },
+          "price": {
+            "currency": "USD",
+            "value": "599.99"
+          }
+        }
+      ]
+    }
+  ],
+  "ttl": "PT24H",
+  "exp": "2024-12-31T23:59:59Z"
+}
+
+Example 2: Healthcare Catalog
+
+{
+  "descriptor": {
+    "name": "Healthcare Services",
+    "short_desc": "Online consultations and diagnostics",
+    "long_desc": "Book appointments with top doctors and access diagnostic services at your convenience."
+  },
+  "fulfillments": [
+    {
+      "type": "teleconsultation",
+      "rateable": true
+    }
+  ],
+  "providers": [
+    {
+      "id": "provider_002",
+      "descriptor": {
+        "name": "City Health Clinic",
+        "short_desc": "Comprehensive healthcare services"
+      },
+      "items": [
+        {
+          "id": "item_002",
+          "descriptor": {
+            "name": "General Physician Consultation",
+            "short_desc": "Consult with experienced physicians online"
+          },
+          "price": {
+            "currency": "USD",
+            "value": "50.00"
+          }
+        }
+      ]
+    }
+  ]
+}
+
+Category Schema
+Description
+The Category schema defines a label under which a collection of items or services can be grouped. It allows providers to classify their offerings for better organization, discovery, and filtering. Categories play a crucial role in enhancing the user experience by enabling structured searches and relevant groupings of products or services.
+
+This schema supports hierarchical structures where categories can be grouped under parent categories. It is widely applicable across domains such as retail, mobility, healthcare, and logistics.
+
+
+Properties
+id:
+
+Type: String
+Description: Unique identifier for the category.
+
+parent_category_id:
+
+Type: String
+Description: Identifier of the parent category under which this category is grouped.
+Usage: Enables hierarchical classification.
+
+descriptor:
+
+Type: Object
+Description: Describes the category, including its name, short description, and additional details.
+Schema Reference: [Descriptor Schema]
+
+time:
+
+Type: Object
+Description: Temporal attributes related to the category, such as its availability.
+Schema Reference: [Time Schema]
+
+ttl:
+
+Type: String
+Format: ISO 8601 Duration
+Description: Time-to-live for the category in seconds.
+Usage: Indicates how long the category can be cached.
+
+tags:
+
+Type: Array of Objects
+Description: Metadata tags for extended attributes.
+Schema Reference: [TagGroup Schema]
+
+
+Implementation Guide
+1. Defining the Category Object
+
+Use the id field to uniquely identify each category.
+The descriptor field is essential for providing meaningful names and descriptions for the category.
+Leverage the parent_category_id to create hierarchical structures where needed.
+
+2. Optional Fields
+
+Include time for categories that are available only during specific periods.
+Use ttl to optimize performance through caching in client systems.
+Add tags for additional metadata, especially in complex or multi-domain applications.
+
+3. Contextual Usage
+
+Retail: Classify items into categories like electronics, clothing, or groceries.
+Mobility: Group services into categories like shared rides, private rides, or luxury services.
+Healthcare: Categorize services into diagnostics, consultations, or wellness packages.
+Logistics: Group offerings by delivery types, such as same-day, express, or standard.
+
+4. API Usage
+
+During on_search: BPPs can return categories as part of the catalog response for better filtering.
+Caching: Categories can be cached using the ttl field for efficient rendering in client applications.
+During update: Updates to categories, such as changes in hierarchy or descriptions, can be communicated dynamically.
+
+
+Examples
+Example 1: Retail Category
+
+{
+  "id": "cat_001",
+  "descriptor": {
+    "name": "Electronics",
+    "short_desc": "Gadgets and devices",
+    "long_desc": "Explore a wide range of electronic gadgets, devices, and accessories."
+  },
+  "tags": [
+    {
+      "descriptor": {
+        "name": "Popular",
+        "short_desc": "Items frequently purchased in this category"
+      },
+      "value": "true"
+    }
+  ],
+  "ttl": "PT24H"
+}
+
+Example 2: Nested Category in Healthcare
+
+{
+  "id": "cat_002",
+  "parent_category_id": "cat_001",
+  "descriptor": {
+    "name": "Diagnostics",
+    "short_desc": "Lab tests and scans",
+    "long_desc": "Access a variety of diagnostic tests, including blood tests, X-rays, and MRIs."
+  },
+  "time": {
+    "range": {
+      "start": "2024-01-01T08:00:00Z",
+      "end": "2024-01-01T20:00:00Z"
+    }
+  }
+}
+
+Example 3: Logistics Category with Temporal Attributes
+
+{
+  "id": "cat_003",
+  "descriptor": {
+    "name": "Express Delivery",
+    "short_desc": "Faster delivery options",
+    "long_desc": "Get your packages delivered quickly with our express delivery service."
+  },
+  "time": {
+    "label": "Availability",
+    "range": {
+      "start": "2024-12-30T09:00:00Z",
+      "end": "2024-12-30T18:00:00Z"
+    }
+  },
+  "ttl": "PT6H"
+}
+
+Example 4: Parent Category
+
+{
+  "id": "cat_004",
+  "descriptor": {
+    "name": "Services",
+    "short_desc": "Broad category for all services"
+  },
+  "tags": [
+    {
+      "descriptor": {
+        "name": "Category Type",
+        "short_desc": "Identifies this as a top-level category"
+      },
+      "value": "parent"
+    }
+  ]
+}
+
+Circle Schema
+Description
+The Circle schema defines a circular geographic region by specifying a center point (GPS coordinates) and a radius. It is used to represent spatial boundaries for various applications, such as service availability zones, delivery areas, or points of interest. This schema is especially useful in domains like logistics, mobility, and retail, where geographic considerations play a critical role in operations.
+
+
+Properties
+gps:
+
+Type: String
+Format: Latitude and Longitude (as per WGS84 standard)
+Description: The center point of the circle represented as GPS coordinates in the format latitude,longitude.
+Example: "12.971598,77.594566"
+
+radius:
+
+Type: Object
+Description: Specifies the radius of the circle.
+Schema Reference: [Scalar Schema]
+Sub-properties:
+value: The numeric value of the radius.
+unit: The unit of measurement for the radius (e.g., meters, kilometers).
+Example:
+
+{
+  "value": 5,
+  "unit": "km"
+}
+
+
+Implementation Guide
+1. Defining the Circle Object
+
+Always provide a valid gps value to represent the circle’s center point.
+Use the radius property to define the spatial extent of the circle in appropriate units (e.g., meters for smaller areas, kilometers for larger ones).
+
+2. Optional Fields
+
+The radius unit should default to meters unless explicitly stated.
+
+3. Contextual Usage
+
+Logistics: Define delivery zones for a specific warehouse or fulfillment center.
+Mobility: Specify service coverage areas for ride-hailing services.
+Retail: Represent the catchment area for store pickups or promotions.
+Healthcare: Define the serviceable radius for home visits or teleconsultation services.
+
+4. API Usage
+
+During search: A BAP can specify the circle to narrow down search results within a geographic boundary.
+During on_search: A BPP can return circles indicating serviceable areas for specific providers or items.
+During update: BAPs or BPPs can dynamically modify service coverage areas based on real-time factors like traffic or demand.
+
+
+Examples
+Example 1: Delivery Zone in Logistics
+
+{
+  "gps": "12.971598,77.594566",
+  "radius": {
+    "value": 10,
+    "unit": "km"
+  }
+}
+
+Example 2: Service Area for Mobility
+
+{
+  "gps": "40.712776,-74.005974",
+  "radius": {
+    "value": 5000,
+    "unit": "m"
+  }
+}
+
+Example 3: Healthcare Home Visit Coverage
+
+{
+  "gps": "28.613939,77.209023",
+  "radius": {
+    "value": 15,
+    "unit": "km"
+  }
+}
+
+Example 4: Retail Promotion Area
+
+{
+  "gps": "51.507351,-0.127758",
+  "radius": {
+    "value": 3,
+    "unit": "km"
+  }
+}
+
+
+Notes
+The Circle schema is particularly suited for use cases requiring quick geographical filtering or visualization.
+Units for the radius should align with the application's requirements (e.g., kilometers for regional coverage, meters for local coverage).
+
+
+City
+
+
+Contact
+Context
+Country
+Credential
+Customer
+DecimalValue
+Descriptor
+Document (Not in spec repo)
+Domain
+Duration
+Error
+Fee
+Form
+FormResponse
+Fulfillment
+FulfillmentState
+Gps
+Image
+Intent
+Item
+ItemQuantity
+Language
+Location
+MediaFile
+Offer
+Option
+Order
+Organization
+Payment
+Person
+Price
+Provider
+Policy (Not in spec repo)
+Quotation
+Rating
+RefundTerm
+Region
+ReplacementTerm
+ReturnTerm
+Scalar
+Schedule
+Skill
+State
+Stop
+Subscriber
+Subscription
+Support
+Tag
+TagGroup
+Time
+TimeToLive
+Time
+Tracking
+Vehicle
+XInput
