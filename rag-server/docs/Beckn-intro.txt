@@ -1,0 +1,405 @@
+Introduction
+
+Beckn protocol defines a standard set of API specifications that when implemented allow the discovery, ordering, fulfillment and post-fulfillment of any product or service. Any platform that offers any resources can publish their services or products along with their terms of business as standard API endpoints of beckn protocol. Beckn protocol is asynchronous, meaning that every API request endpoint implemented by the receiver has a corresponding callback endpoint implemented by the caller where it receives the response. 
+
+To create a beckn protocol enabled network, two types of platform actors need to exist at minimum. One is called the BAP (Beckn Application Platform). The other is called the BPP (Beckn Provider Platform). There are other actors that can exist but we will look at them later. They are optional for now. 
+
+The BAP is the platform where the consumer of products and services exists. The BPP is the platform where the provider of products and services exists. 
+
+Both these platforms implement the standard API endpoints of beckn. However, the BPP implements only the request endpoints and the BAPs implement only the callback endpoints. The BAP calls the request endpoints of the BPP and the BPP calls the callback endpoints of the BAP as a response to the request it receives from the BAP. Sometimes, the BPPs also call the callback endpoints of the BAP without the BAP explicitly calling the request endpoint of the BPP.
+
+These API endpoints are stateless which means that each endpoint can be called independently in any order without calling a different API endpoint. 
+
+Each endpoint is also categorized under one of the following categories namely
+
+Discovery
+Ordering
+Fulfillment
+Post-fulfillment
+
+Every request or callback consists of a packet containing two parts
+context
+message
+
+The “context” contains high-level metadata related to the request
+The “message” contains detailed information about the request
+
+Following are the APIs and their meaning. 
+
+Discovery API Endpoints
+Overview
+The discovery API of beckn protocol consists of a two of endpoints namely,
+
+search
+on_search
+
+Let us look at them in detail. 
+search
+Implemented by BPP 
+Called by BAP
+Used to declare an intent to discover catalogs
+The object that defines the search is called an Intent (or search intent)
+The Intent is embedded inside the “message” part of the request
+The intent object may contain information about 
+The item being searched for
+The provider who has the items
+The nature of fulfillment
+The category of items being searched for
+Tags related to the item being searched for
+Once the BPP receives the search, it immediately sends an acknowledgement in the same session. The actual response is sent in the corresponding callback endpoint, i.e on_search
+
+on_search
+
+Implemented by the BAP
+Called by the BPP as a response to a search call on its endpoint
+Used to return catalogs of products and services
+Multiple catalogs can be returned
+The object that defines the catalog is called “Catalog”
+The Catalog object is embedded in the message part of the request
+The catalog may contain a list of items grouped under one or more providers
+The catalog may contain a list of fulfillment terms offered by each provider like
+What mode the item will be fulfilled
+Who will fulfill the item (Agent)
+Where the item will be fulfilled
+When the item will be fulfilled
+The catalog may contain a list of categories under which the items can be grouped
+The catalog may contain a list of locations where the items are available
+The catalog may contain a list of payment terms associated with each item
+The catalog may also contain a list of offers associated with each item, provider or category
+
+Conclusion
+The search and on_search API endpoints can be called any number of times until the consumer has finally discovered the items they want. 
+
+The discovery and identification of the items (products or services) marks the end of the Discovery stage of a beckn protocol transaction. 
+Ordering API endpoints
+Overview
+
+Ordering API of beckn protocol consists of six endpoints. They are
+select
+on_select
+init 
+on_init
+confirm 
+on_confirm
+
+Let us look at each of them in detail
+select
+
+Implemented by BPP
+Called by BAP
+Purpose : Requesting a quote for selected items with other associated terms
+Should contain NO customer context
+Object embedded in the “message” part of the request - Order object
+The Order object contains
+Items selected from the catalog with their respective quantities
+Provider selected from the catalog
+Any offers that were discovered in the catalog
+Fulfillment details selected from the catalog
+Payment details selected from catalog
+
+on_select
+
+Implemented by BAP
+Called by BPP as a response to a select call on its endpoint
+Purpose : Providing a quote for selected items with other associated terms as a response to the “select” call made by the BAP
+Should contain NO customer context
+The object embedded in the “message” part of the request - Order object
+The Order object contains
+Items selected from the catalog
+Provider selected from the catalog
+Offer selected from the catalog
+Fulfillment details selected from the catalog
+Payment details selected from catalog
+And this time, a Quote containing the price quoted for the selected product services along with the detailed breakup of costs
+
+The calling of the select / on_select pair of endpoints is equivalent to adding a set of products to a cart and requesting the total cart value. Although the existence of a “cart” is not necessary as it is just a UI feature. The purpose of the select / on_select endpoints is to negotiate and arrive at a price for a set of selected catalog items along with their associated providers, offers, fulfillments and payment terms. 
+
+init 
+Implemented by the BPP
+Called by the BAP
+Purpose : Requesting the provider for the final quote for the selected items along with all the terms of service, cancellation, returns and replacement terms (if applicable), payment details like account information, amount to be paid, payment link etc. 
+MUST contain customer context like billing information, customer information
+The object embedded in the “message” part of the init request is also the Order object
+The Order object contains
+Items selected from the catalog
+Provider selected from the catalog
+Offer selected from the catalog
+Fulfillment details selected from the catalog
+Payment terms selected from catalog
+Customer information (mandatory)
+Billing information (mandatory)
+This is the first time when the consumer details are passed from the consumer to the provider. All the previous endpoints i.e search / on_search, select / on_select contain NO information related to the consumer. 
+This endpoint should typically be called by the BAP only when the consumer has agreed to the price quoted by the provider and wants to now proceed to buying the product or service. 
+The provider upon receiving an init request must assume that the consumer is ready to order now and must block the inventory for a limited period of time and begin calculating the final quote with terms and conditions, taxes, fulfillment charges etc, 
+on_init
+Implemented by the BAP
+Called by the BPP as a response to an init call on its endpoint
+Purpose : Providing the final quote for the items selected by the consumer along with all the terms of service, cancellation, returns and replacement terms (if applicable), payment details like account information, amount to be paid, payment link etc. 
+Once the provider has calculated the final quote, blocked the inventory, the BPP calls the on_init endpoint of the BAP
+The object embedded in the “message” part of the on_init request is also the Order object
+The Order object contains
+Items selected from the catalog
+Provider selected from the catalog
+Offer selected from the catalog
+Fulfillment details selected from the catalog
+Payment terms selected from catalog
+Customer information (mandatory)
+Billing information (mandatory)
+Final Quote with detailed breakup (including fulfillment charges, taxes, convenience fees, and any other fees applicable to the transaction)
+Terms of service like cancellation terms, return or replacement terms if applicable, payment details
+This can be considered as a draft contract containing all the details of an order before confirmation. Sort of like a proforma invoice. 
+Sometimes the provider may also return consumer-specific offers and quotes depending upon loyalty, lucky draws, and other consumer details like birthday etc
+
+The end of the init / on_init cycle can be considered as the point where the consumer decides to checkout the cart and initiate the payment flow (if applicable)
+
+Sometimes the payment terms returned by the BPP in on_init may not require pre-payment by the consumer. In those cases, no payment workflow may be executed at the BAP end. 
+confirm
+Implemented by the BPP
+Called by the BAP
+Purpose : Placing the order for the selected items along with all the terms of service, cancellation, returns and replacement terms (if applicable), payment details like account information, amount to be paid, payment link etc.
+MUST contain customer context like billing information, customer information
+MUST contain any payment reference information in case the order required pre-payment before confirmation
+The object embedded in the “message” part of the confirm request is also the Order object
+The Order object contains
+Items selected from the catalog
+Provider selected from the catalog
+Offer selected from the catalog
+Fulfillment details selected from the catalog
+Payment terms selected from catalog
+Customer information (mandatory)
+Billing information (mandatory)
+Payment reference (if applicable)
+This endpoint should typically be called by the BAP only when the consumer has agreed to all the terms offered by the provider and wants to now proceed to placing the order. 
+The BPP upon receiving a confirm request must assume that the consumer has agreed to all the terms and conditions and has confirmed the order. The BPP must now block the provider’s inventory and begin the fulfillment of the order. The inventory must now be blocked until the order is canceled. 
+
+
+on_confirm
+Implemented by the BPP
+Called by the BAP as a response to a confirm call on its endpoint
+Purpose : Returning the confirmed order with the order ID and details regarding the latest state of fulfillment
+Upon the successful creation of the order by the provider, the BPP calls the on_confirm endpoint of the BAP
+Upon the receipt of the on_confirm call, the BAP must now show the confirmed order details to the consumer
+The object embedded in the “message” part of the on_confirm request is also the Order object
+The Order object contains
+Order ID
+Items selected from the catalog
+Provider selected from the catalog
+Offer selected from the catalog
+Fulfillment details selected from the catalog
+Payment terms selected from catalog
+Customer information (mandatory)
+Billing information (mandatory)
+Payment reference (if applicable)
+Sometimes an authorization code to authorize the start of fulfillment. This is typically provided to the agent of fulfillment to start the fulfillment process
+
+Conclusion
+The select / on_select, init / on_init, and the confirm / on_confirm endpoints constitute the Ordering stage of a beckn protocol transaction.
+
+The successful completion of the confirm / on_confirm calls marks the end of the ordering stage of a beckn protocol transaction. Now the BAP and the BPP have entered the Fulfillment stage. 
+Fulfillment Endpoints
+Fulfillment in beckn protocol is achieved using four pairs of endpoints. They are
+status and on_status
+update and on_update
+track and on_track
+cancel and on_cancel
+
+Let us look at each of them in detail
+status
+Implemented by BPP
+Called by BAP
+Purpose : To request the latest state of an order
+The object embedded in the “message” part of the status request is also the Order object
+The Order object contains
+Order ID
+The status endpoint of the BPP is called whenever the BAP wants to refresh the status of the order. Sometimes the refresh can be manually triggered by the consumer or automatically triggered by the BAP
+The BPP upon receiving the status call should immediately fetch the latest state of the order with all its details
+on_status
+Implemented by BAP
+Called by BPP usually as a response to a status call on its endpoint
+Purpose : To send the latest state of an order
+The object embedded in the “message” part of the on_status request is also the Order object
+The Order object contains complete information of the order like
+Order ID
+Items being bought
+Provider who received the order
+Offer applied
+Fulfillment details along with the latest state of fulfillment
+Payment terms along with payment reference
+Customer information
+Billing information
+All terms of service like cancellation terms, return and replacement terms (if applicable), and others
+Important : Sometimes the BPP can call the on_status endpoint of the BAP without the BAP explicitly requesting the BPP on its status endpoint
+However, if the BAP does call the status endpoint of the BPP, the BPP MUST respond with an on_status call to the BAP
+
+It is important to note that the status / on_status call DOES NOT change the terms of the order. It is only to notify the latest “state” of the order, especially when the fulfillment of an order changes its state. For example, “Delivery agent has picked up the package”. “Trip has started”, “Your appointment has ended”, “The machine has begun manufacturing”, etc are all status updates that can be sent by the BPP to the BAP via an on_status call. 
+
+To change the actual terms of the order, there is a different endpoint. 
+update
+Implemented by BPP
+Called by BAP
+Purpose : To request an update to the terms of the order like adding / removing items, changing billing details, fulfillment details like delivery location, sending more information requested by the provider etc. 
+The object embedded in the “message” part of the update request is also the Order object
+The Order object contains
+Update target : The object being updated
+Order ID
+The details of the updated object inside the order
+The BPP upon receiving the status call should immediately start checking whether the order actually can be updated as per the terms agreed upon initially during the init / on_init calls. If those updates require any additional payment, it must start generating the payment terms for that. 
+on_update
+Implemented by BAP
+Called by BPP usually as a response to an update call on its endpoint
+Purpose : To send the updated order
+The object embedded in the “message” part of the on_update request is also the Order object
+The Order object contains complete information of the updated order like
+Order ID
+Updated Items 
+Updated Provider
+Updated Offer
+Updated Fulfillment details along with the latest state of the updated fulfillment
+Updated Payment terms
+Updated Customer information
+Updated Billing information
+Updated terms of service like cancellation terms, return and replacement terms (if applicable), and others
+Important : Sometimes the BPP can call the on_update endpoint of the BAP without the BAP explicitly requesting the BPP on its update endpoint. This typically happens when, say, the provider runs out of inventory; or the fulfillment agent cancels the delivery and now the provider is looking for another agent; or the price of an item changes, etc. 
+However, if the BAP does call the update endpoint of the BPP, the BPP MUST respond with an on_update call to the BAP
+Not all update requests are serviceable. If the update requests are in conflict with the agreed upon terms, the BPP can return the original order details back in the on_update with an error message. 
+
+The update / on_update calls can be made any number of times between the BAP and the BPP. 
+track
+Implemented by BPP
+Called by BAP
+Purpose : To request tracking information related to an order.  
+The object embedded in the “message” part of the track request is the Tracking object
+The Tracking object contains
+Tracking reference
+Order ID
+Any webhook where tracking data can be pushed
+on_track
+Implemented by BAP
+Called by BPP as a response to a track call on its endpoint
+Purpose : To return tracking information related to an order.  
+The object embedded in the “message” part of the on_track request is the Tracking object
+The Tracking object contains
+Tracking reference
+Tracking URL
+Status of the tracking
+
+It is VERY IMPORTANT to note that the track / on_track APIs are not just used for sending real-time tracking information. It is just to request the tracking “handle” or “pointer” or “URL” that in-turn contains the actual tracking data.  
+
+Secondly, it is important to note that the track / on_track APIs are not just used for tracking delivery or shipping. ANY real-time information related to the fulfillment of an order can be sent via the tracking handles returned in the on_track response. Things like links to monitoring dashboards, video streaming links for surveillance of fulfillment are also legal candidates for tracking information. 
+cancel
+Implemented by BPP
+Called by BAP
+Purpose : To request cancellation of an order.  
+The object embedded in the “message” part of the cancel request is the Order object again
+The Order object contains
+Order ID
+Reason for cancellation
+Upon receiving the cancel request, the BPP must initiate the cancellation workflow in accordance with the terms of cancellation agreed upon during the init / on_init calls. This may involve activities such as unblocking the inventory, recalling any deliveries, stopping any machines, calculating the cancellation charges, etc. 
+In case the cancellation terms got updated during the update / on_update calls, then the BPP must take those terms into account before initiating the cancellation procedure.
+on_cancel
+
+Implemented by BAP
+Called by BPP usually as a response to a cancel call on its endpoint
+Purpose : To return the order with the latest state of cancellation.  
+The object embedded in the “message” part of the on_cancel request is the Order object
+The Order object contains
+Order id
+Order status set to “Cancelled”
+Cancellation reason provided by the consumer
+Cancelled Items 
+Provider
+Cancelled Offer
+Fulfillment details along with the latest state of the cancelled fulfillment
+Updated Payment terms
+Customer information
+Billing information
+Terms of service like cancellation terms, return and replacement terms (if applicable), and others
+In case the order cancellation is in conflict with the cancellation terms agreed between the consumer and the provider, the BPP must send back the latest order object with an error message
+
+
+It is important to note that sometimes, the BPP can call the on_cancel endpoint of the BAP without the BAP explicitly calling the cancel endpoint of the BPP. This typically happens when the provider cancels the order at their ends due to lack of inventory, shop closing, cancellation of a downstream order, cancellation by the fulfillment agent etc. 
+
+Conclusion
+
+The status / on_status, update / on_update, track / on_track, and cancel / on_cancel constitute the fulfillment stage of a beckn protocol transaction. The state of a transaction usually moves out of the fulfillment stage into the post-fulfillment stage upon receiving a final on_status call with a “completed” fulfillment status from the BPP, or upon the cancellation of the order. 
+Post-fulfillment API Endpoints
+The Post-fulfillment API endpoints of beckn protocol consists of four endpoints namely
+rating
+on_rating
+support
+on_support
+
+Let us look at them in detail. 
+rating
+Implemented by BPP
+Called by BAP
+Purpose : To rate something related to an order like an item, agent, provider, or any other rateable entity  
+The object embedded in the “message” part of the cancel request is the Rating object
+The Rating object contains
+The type of entity that is being rated like Item, Order, Agent, Customer service, etc
+ID of the rateable entity
+Rating provided
+Upon receiving the rating request, the BPP must record the rating and initiate any workflows related to the rating of the entity
+
+on_rating
+Implemented by BAP
+Called by BPP as a response to a rating call on its endpoint
+Purpose : To acknowledge the rating received by a consumer on the BAP and request for additional feedback 
+The object embedded in the “message” part of the cancel request is the Feedback Form object again
+The Feedback Form object contains
+A link to a feedback form
+support
+Implemented by BPP
+Called by BAP
+Purpose : To request support information related to an ongoing transaction 
+The object embedded in the “message” part of the cancel request is the Support object
+The Support object contains
+Reference ID - This is usually the order ID or any reference ID given to the consumer related to the support
+Optionally, the Support object can also contain a phone number or an email address if the customer wants the provider to call them back
+Upon receiving the support request, the BPP must fetch the support information related to the request like help center phone number, email address, or initiate any support workflows like the generation of a chat session, etc. 
+
+Typically the support request is called usually after the order has been confirmed but sometimes the support information is available even without the creation of an order. 
+on_support
+Implemented by BAP
+Called by BPP as a response to a support call
+Purpose : To provide support information related to an ongoing transaction 
+The object embedded in the “message” part of the cancel request is the Support object
+The Support object contains
+Reference ID - This is usually the order ID or any reference ID given by the consumer
+Support phone number
+Support email
+A chat URL of a newly created chat session with a support center executive
+
+It is very important to note that the support / on_support calls only exchange the support center handles and do NOT carry the actual support data like call data, chat messages etc. The actual exchange of data is done on the respective protocol which is defined by the handles being exchanged. For example, phone calls will happen on the phone network, emails will happen on the email network, chats will happen on the chat page, etc. the support / on_support calls only transmit the phone number, email address or the chat urls not the actual data. 
+Conclusion
+
+The rating / on_rating, and the support / on_support endpoints constitute the Post-fulfillment API of beckn protocol.
+
+The post-fulfillment stage of a transaction usually follows the fulfillment stage but is not always necessary. Sometimes some BPPs may simply implement an rating endpoint independent of all other endpoints to allow any user to rate something. The same goes for support. 
+Summary
+
+In summary there are 10 pairs of request and callback endpoints namely
+search
+select
+init
+confirm
+status
+update
+track
+cancel
+rating
+support
+on_search
+on_select
+on_init
+on_confirm
+on_status
+on_update
+on_track
+on_cancel
+on_rating
+on_support
+
+Collectively these endpoints are called the “Transaction API Specification” of beckn. Beckn protocol contains other API specification collections like Meta API, Registry API, Policy API, Reputation API, Open Data API, Reconciliation API that consist of other endpoints related to other activities that occur in a transactional ecosystem.
+
+When a sufficient number of platforms implement beckn protocol, an “Open Network” is created. 
