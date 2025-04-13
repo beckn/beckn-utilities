@@ -6,11 +6,11 @@ export function getUniqueDomains(records: any[]) {
       records.map((rec) => {
         return rec.DOMAIN;
       })
-    ),
+    )
   ].filter((e) => e);
   return domains.map((domain) => {
     return {
-      DomainName: domain,
+      DomainName: domain
     };
   });
 }
@@ -21,7 +21,7 @@ export function getUniqueLocations(records: any[]) {
       records.map((rec) => {
         return rec.gps;
       })
-    ),
+    )
   ].filter((e) => e);
   return gpss.map((gps) => {
     const record = records.find((rec) => rec.gps === gps);
@@ -34,10 +34,11 @@ export function getUniqueLocations(records: any[]) {
         zip: record.zip,
         latitude: record.gps.split(",")[0].trim(),
         longitude: record.gps.split(",")[1].trim(),
-        gps: record.gps,
+        gps: record.gps
       };
     } catch (err) {
       console.log("Error in ", record);
+      process.exit(1);
     }
   });
 }
@@ -54,12 +55,12 @@ export function getUniqueMedia(records: any[], providerRecords: any[]) {
             return rec.provider_Logo_image_url;
           })
         )
-    ),
+    )
   ].filter((e) => e);
   return images.map((image) => {
     return {
       url: image,
-      size_type: "sm",
+      size_type: "sm"
     };
   });
 }
@@ -70,13 +71,14 @@ export function getUniqueCategories(records: any[]) {
       records.map((rec) => {
         return rec["category name"];
       })
-    ),
+    )
   ].filter((e) => e);
   return categoryNames.map((categoryName) => {
     const record = records.find((rec) => rec["category name"] === categoryName);
     return {
+      title: record["category code"],
       value: record["category name"],
-      category_code: record["category code"],
+      category_code: record["category code"]
     };
   });
 }
@@ -88,14 +90,14 @@ export function getUniqueTags(records: any[]) {
         const names = rec.tag_name.split(",");
         return names.map((name: string) => name.trim());
       })
-    ),
+    )
   ].filter((e) => e);
   return tags.map((tag: string) => {
     return {
       tag_name: tag,
       code: tag.toLowerCase().replace(" ", "_"),
       value: tag,
-      display: true,
+      display: true
     };
   });
 }
@@ -107,26 +109,33 @@ export function getUniqueFulfillments(records: any[]) {
         const names = rec.fulfillments.split(",");
         return names.map((name: string) => name.trim());
       })
-    ),
+    )
   ].filter((e) => e);
   return fulfillments.map((fulfillment: string) => {
     return {
       type: fulfillment,
-      rateable: true,
+      rateable: true
     };
   });
 }
 
-export function getUniqueProviders(records: any[], domainsMap: any, locationsMap: any, mediaMap: any) {
+export function getUniqueProviders(
+  records: any[],
+  domainsMap: any,
+  locationsMap: any,
+  mediaMap: any
+) {
   const providerHashes = [
     ...new Set(
       records.map((rec) => {
         return rec.provider_name + ":::" + rec.gps;
       })
-    ),
+    )
   ].filter((e) => e);
   return providerHashes.map((providerHash) => {
-    const record = records.find((rec) => rec.provider_name + ":::" + rec.gps === providerHash);
+    const record = records.find(
+      (rec) => rec.provider_name + ":::" + rec.gps === providerHash
+    );
     return {
       provider_name: record.provider_name,
       short_desc: record.provider_short_desc,
@@ -135,44 +144,59 @@ export function getUniqueProviders(records: any[], domainsMap: any, locationsMap
       provider_uri: record.provider_uri,
       domain_id: domainsMap[record.DOMAIN],
       location_id: locationsMap[record.gps],
-      logo: mediaMap[record.provider_Logo_image_url],
+      logo: mediaMap[record.provider_Logo_image_url]
     };
   });
 }
 
-export function getUniqueItems(records: any[], mediaMap: any, providersMap: any) {
+export function getUniqueItems(
+  records: any[],
+  mediaMap: any,
+  providersMap: any
+) {
   const itemHashes = [
     ...new Set(
       records.map((rec) => {
         return rec.Item_name + ":::" + rec.provider_name;
       })
-    ),
+    )
   ].filter((e) => e);
-  return itemHashes.map((itemHash) => {
-    const record = records.find((rec) => rec.Item_name + ":::" + rec.provider_name === itemHash);
+  console.log(JSON.stringify(providersMap));
+  return itemHashes.map((itemHash, i) => {
+    const record = records.find(
+      (rec) => rec.Item_name + ":::" + rec.provider_name === itemHash
+    );
+    console.log(record.provider_name, i);
     return {
       name: record.Item_name,
       short_desc: record.short_desc,
       long_desc: record.long_desc,
-      code: record.code,
+      code: record.Item_name,
       max_quantity: record.max_quantity,
       min_quantity: record.min_quantity,
       image: [mediaMap[record.Logo_image_url]],
-      provider: providersMap[record.provider_name],
+      provider: providersMap[record.provider_name]
     };
   });
 }
 
-export function getUniqueSCRetailProducts(records: any[], itemsMap: any, providersMap: any) {
+export function getUniqueSCRetailProducts(
+  records: any[],
+  itemsMap: any,
+  providersMap: any
+) {
   const skuhashes = [
     ...new Set(
       records.map((rec) => {
         return rec.sku + ":::" + rec.Item_name + ":::" + rec.provider_name;
       })
-    ),
+    )
   ].filter((e) => e);
   return skuhashes.map((skuhash) => {
-    const record = records.find((rec) => rec.sku + ":::" + rec.Item_name + ":::" + rec.provider_name === skuhash);
+    const record = records.find(
+      (rec) =>
+        rec.sku + ":::" + rec.Item_name + ":::" + rec.provider_name === skuhash
+    );
     const providerKey = record.provider_name;
     const itemKey = record.Item_name + ":::" + providersMap[providerKey];
     return {
@@ -181,7 +205,8 @@ export function getUniqueSCRetailProducts(records: any[], itemsMap: any, provide
       max_price: record.max_price,
       stock_quantity: record.stock_quantity,
       stock_status: record.stock_status,
-      item_id: itemsMap[itemKey],
+      currency: record.currency,
+      item_id: itemsMap[itemKey]
     };
   });
 }
@@ -205,7 +230,7 @@ export function getCatAttrTagRelations(
       taxanomy: "CATEGORY",
       taxanomy_id: `${categoryId}`,
       item: itemId,
-      provider: providerId,
+      provider: providerId
     });
     let tagNames = record.tag_name.split(",");
     tagNames = tagNames.map((name: string) => name.trim());
@@ -215,7 +240,7 @@ export function getCatAttrTagRelations(
         taxanomy: "TAG",
         taxanomy_id: `${tagId}`,
         item: itemId,
-        provider: providerId,
+        provider: providerId
       });
     }
     return retVal;
@@ -231,7 +256,9 @@ export function getItemFulfillments(
   locationsMap: any
 ) {
   return records.flatMap((record) => {
-    const providerRecord = providerRecords.find((r) => r.provider_name === record.provider_name);
+    const providerRecord = providerRecords.find(
+      (r) => r.provider_name === record.provider_name
+    );
     const retVal = [];
     const locationId = locationsMap[providerRecord.gps];
     const providerKey = record.provider_name;
@@ -243,14 +270,19 @@ export function getItemFulfillments(
     for (const fulfillmentName of fulfillmentNames) {
       const fulfillmentId = fulfillmentMaps[fulfillmentName];
       //HARDCODED DATA
-      let timestamp = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
-      if (fulfillmentName === "CHECK-OUT") timestamp = new Date(new Date().setFullYear(new Date().getFullYear() + 5));
+      let timestamp = new Date(
+        new Date().setFullYear(new Date().getFullYear() - 1)
+      );
+      if (fulfillmentName === "CHECK-OUT")
+        timestamp = new Date(
+          new Date().setFullYear(new Date().getFullYear() + 5)
+        );
 
       retVal.push({
         item_id: itemId,
         fulfilment_id: fulfillmentId,
         location_id: locationId,
-        timestamp: timestamp,
+        timestamp: timestamp
       });
     }
     return retVal;
@@ -272,7 +304,8 @@ function getDuplicates(records: any[], keys: any[]): any[] {
         value += " ";
       }
     }
-    if (valueSet.has(value)) duplicates.push(`Line:${index + 1} ${JSON.stringify(record)}`);
+    if (valueSet.has(value))
+      duplicates.push(`Line:${index + 1} ${JSON.stringify(record)}`);
     else valueSet.add(value);
   }
   return duplicates;
@@ -293,3 +326,40 @@ export function hasDuplicates(providerRecords: any[], records: any[]) {
   }
   return false;
 }
+
+export const createPriceBreakupObjects = (
+  records: any[],
+  sc_retail_products_map: any
+) => {
+  try {
+    console.log(JSON.stringify(sc_retail_products_map, null, 2));
+    return Object.keys(sc_retail_products_map)
+      .map((sc_retail_product) => {
+        const matched_record = records.find(
+          (record) => record["sku"] === sc_retail_product.split(":::")[0]
+        );
+        console.log(matched_record);
+        if (matched_record) {
+          return {
+            sc_retail_product_id: sc_retail_products_map[sc_retail_product],
+            price_breakups: [
+              {
+                title: "BASE PRICE",
+                currency: matched_record.currency,
+                value: matched_record.base_price
+              },
+              {
+                title: "TAX",
+                currency: matched_record.currency,
+                value: matched_record.tax
+              }
+            ]
+          };
+        }
+      })
+      .filter(Boolean);
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
+};

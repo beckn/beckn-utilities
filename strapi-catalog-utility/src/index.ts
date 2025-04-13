@@ -16,8 +16,9 @@ import {
   getUniqueProviders,
   getUniqueTags,
   hasDuplicates,
+  createPriceBreakupObjects
 } from "./recordCreator";
-import { createObjects } from "./dbWriter";
+import { createObjects, createPriceBreakups } from "./dbWriter";
 
 async function main(providerFilename: string, itemFilename: string) {
   dotenv.config();
@@ -32,54 +33,103 @@ async function main(providerFilename: string, itemFilename: string) {
 
   const domains = getUniqueDomains(providerRecords);
   console.log(`Domains: ${domains.length}`);
-  const domainsMap = await createObjects(client, "Domains", domains, [{ key: "DomainName", relation: false }]);
+  const domainsMap = await createObjects(client, "Domains", domains, [
+    { key: "DomainName", relation: false }
+  ]);
 
   const locations = getUniqueLocations(providerRecords);
   console.log(`Locations: ${locations.length}`);
-  const locationsMap = await createObjects(client, "Locations", locations, [{ key: "gps", relation: false }]);
+  const locationsMap = await createObjects(client, "Locations", locations, [
+    { key: "gps", relation: false }
+  ]);
 
   const media = getUniqueMedia(records, providerRecords);
   console.log(`Images: ${media.length}`);
-  const mediaMap = await createObjects(client, "Medias", media, [{ key: "url", relation: false }]);
+  const mediaMap = await createObjects(client, "Medias", media, [
+    { key: "url", relation: false }
+  ]);
 
   const categories = getUniqueCategories(records);
   console.log(`Categories: ${categories.length}`);
-  const categoriesMap = await createObjects(client, "Categories", categories, [{ key: "value", relation: false }]);
+  const categoriesMap = await createObjects(client, "Categories", categories, [
+    { key: "value", relation: false }
+  ]);
 
   const tags = getUniqueTags(records);
   console.log(`Tags: ${tags.length}`);
-  const tagsMap = await createObjects(client, "Tags", tags, [{ key: "tag_name", relation: false }]);
+  const tagsMap = await createObjects(client, "Tags", tags, [
+    { key: "tag_name", relation: false }
+  ]);
 
   const fulfillments = getUniqueFulfillments(records);
   console.log(`Fulfillments: ${fulfillments.length}`);
-  const fulfillmentMaps = await createObjects(client, "fulfilments", fulfillments, [{ key: "type", relation: false }]);
+  const fulfillmentMaps = await createObjects(
+    client,
+    "fulfilments",
+    fulfillments,
+    [{ key: "type", relation: false }]
+  );
 
-  const providers = getUniqueProviders(providerRecords, domainsMap, locationsMap, mediaMap);
+  const providers = getUniqueProviders(
+    providerRecords,
+    domainsMap,
+    locationsMap,
+    mediaMap
+  );
   console.log(`Providers: ${providers.length}`);
-  const providersMap = await createObjects(client, "Providers", providers, [{ key: "provider_name", relation: false }]);
+  const providersMap = await createObjects(client, "Providers", providers, [
+    { key: "provider_name", relation: false }
+  ]);
 
   const items = getUniqueItems(records, mediaMap, providersMap);
   console.log(`Items: ${items.length}`);
   const itemsMap = await createObjects(client, "Items", items, [
     { key: "name", relation: false },
-    { key: "provider", relation: true },
+    { key: "provider", relation: true }
   ]);
 
-  const sc_products = getUniqueSCRetailProducts(records, itemsMap, providersMap);
+  const sc_products = getUniqueSCRetailProducts(
+    records,
+    itemsMap,
+    providersMap
+  );
   console.log(`sc-products: ${sc_products.length}`);
-  const sc_productsMap = await createObjects(client, "sc-products", sc_products, [
-    { key: "sku", relation: false },
-    { key: "item_id", relation: true },
-  ]);
 
-  const cat_attr_tag_relations = getCatAttrTagRelations(records, categoriesMap, tagsMap, itemsMap, providersMap);
+  const sc_productsMap = await createObjects(
+    client,
+    "sc-products",
+    sc_products,
+    [
+      { key: "sku", relation: false },
+      { key: "item_id", relation: true }
+    ]
+  );
+
+  const price_breakups = createPriceBreakupObjects(records, sc_productsMap);
+  const price_breakups_response = await createPriceBreakups(
+    client,
+    price_breakups
+  );
+
+  const cat_attr_tag_relations = getCatAttrTagRelations(
+    records,
+    categoriesMap,
+    tagsMap,
+    itemsMap,
+    providersMap
+  );
   console.log(`cat_attr_tag_relations: ${cat_attr_tag_relations.length}`);
-  const catAttrTagRelationsMap = await createObjects(client, "cat-attr-tag-relations", cat_attr_tag_relations, [
-    { key: "taxanomy", relation: false },
-    { key: "taxanomy_id", relation: false },
-    { key: "item", relation: true },
-    { key: "provider", relation: true },
-  ]);
+  const catAttrTagRelationsMap = await createObjects(
+    client,
+    "cat-attr-tag-relations",
+    cat_attr_tag_relations,
+    [
+      { key: "taxanomy", relation: false },
+      { key: "taxanomy_id", relation: false },
+      { key: "item", relation: true }
+      // { key: "provider", relation: true }
+    ]
+  );
 
   const itemFulfillments = getItemFulfillments(
     records,
@@ -90,14 +140,21 @@ async function main(providerFilename: string, itemFilename: string) {
     locationsMap
   );
   console.log(`itemFulfillments: ${itemFulfillments.length}`);
-  const itemFulfillmentsMap = await createObjects(client, "item-fulfillments", itemFulfillments, [
-    { key: "item_id", relation: true },
-    { key: "fulfilment_id", relation: true },
-  ]);
+  const itemFulfillmentsMap = await createObjects(
+    client,
+    "item-fulfillments",
+    itemFulfillments,
+    [
+      { key: "item_id", relation: true },
+      { key: "fulfilment_id", relation: true }
+    ]
+  );
 }
 
 if (process.argv.length !== 4) {
-  console.log("Please pass the providers csv file and items csv file as arguments");
+  console.log(
+    "Please pass the providers csv file and items csv file as arguments"
+  );
   process.exit(1);
 }
 
