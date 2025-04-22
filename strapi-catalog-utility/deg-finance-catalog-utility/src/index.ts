@@ -55,20 +55,20 @@ async function main(providerFilename: string, itemFilename: string) {
     { key: "value", relation: false },
   ]);
 
-  const tags = getUniqueTags(records);
-  console.log(`Tags: ${tags.length}`);
-  const tagsMap = await createObjects(client, "Tags", tags, [
-    { key: "tag_name", relation: false },
-  ]);
+  // const tags = getUniqueTags(records);
+  // console.log(`Tags: ${tags.length}`);
+  // const tagsMap = await createObjects(client, "Tags", tags, [
+  //   { key: "tag_name", relation: false }
+  // ]);
 
-  const fulfillments = getUniqueFulfillments(records);
-  console.log(`Fulfillments: ${fulfillments.length}`);
-  const fulfillmentMaps = await createObjects(
-    client,
-    "fulfilments",
-    fulfillments,
-    [{ key: "type", relation: false }]
-  );
+  // const fulfillments = getUniqueFulfillments(records);
+  // console.log(`Fulfillments: ${fulfillments.length}`);
+  // const fulfillmentMaps = await createObjects(
+  //   client,
+  //   "fulfilments",
+  //   fulfillments,
+  //   [{ key: "type", relation: false }]
+  // );
 
   const providers = getUniqueProviders(
     providerRecords,
@@ -105,16 +105,16 @@ async function main(providerFilename: string, itemFilename: string) {
     ]
   );
 
-  const price_breakups = createPriceBreakupObjects(records, sc_productsMap);
-  const price_breakups_response = await createPriceBreakups(
-    client,
-    price_breakups
-  );
+  // const price_breakups = createPriceBreakupObjects(records, sc_productsMap);
+  // const price_breakups_response = await createPriceBreakups(
+  //   client,
+  //   price_breakups
+  // );
 
   const cat_attr_tag_relations = getCatAttrTagRelations(
     records,
     categoriesMap,
-    tagsMap,
+    [],
     itemsMap,
     providersMap
   );
@@ -131,24 +131,24 @@ async function main(providerFilename: string, itemFilename: string) {
     ]
   );
 
-  const itemFulfillments = getItemFulfillments(
-    records,
-    providerRecords,
-    fulfillmentMaps,
-    itemsMap,
-    providersMap,
-    locationsMap
-  );
-  console.log(`itemFulfillments: ${itemFulfillments.length}`);
-  const itemFulfillmentsMap = await createObjects(
-    client,
-    "item-fulfillments",
-    itemFulfillments,
-    [
-      { key: "item_id", relation: true },
-      { key: "fulfilment_id", relation: true },
-    ]
-  );
+  // const itemFulfillments = getItemFulfillments(
+  //   records,
+  //   providerRecords,
+  //   fulfillmentMaps,
+  //   itemsMap,
+  //   providersMap,
+  //   locationsMap
+  // );
+  // console.log(`itemFulfillments: ${itemFulfillments.length}`);
+  // const itemFulfillmentsMap = await createObjects(
+  //   client,
+  //   "item-fulfillments",
+  //   itemFulfillments,
+  //   [
+  //     { key: "item_id", relation: true },
+  //     { key: "fulfilment_id", relation: true }
+  //   ]
+  // );
 }
 
 if (process.argv.length !== 4) {

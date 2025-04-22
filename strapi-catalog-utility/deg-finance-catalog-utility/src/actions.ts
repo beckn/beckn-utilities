@@ -84,7 +84,7 @@ function getIndexString(resources: string) {
     case "fulfilments":
       return `/api/fulfilments?`;
     case "Providers":
-      return `/api/${resources}?&filters[domain_id]=5&populate=*`;
+      return `/api/${resources.toLowerCase()}?filters[domain_id]=4`;
     default:
       return `/api/${resources}?populate=*`;
   }
