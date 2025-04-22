@@ -29,7 +29,7 @@ export async function createObjects(
       for (const pk of pks) {
         if (pk.relation) {
           console.log(tObj.attributes[pk.key]);
-          keys.push(tObj.attributes[pk.key].data.id);
+          keys.push(tObj.attributes[pk.key]?.data?.id);
         } else {
           keys.push(tObj.attributes[pk.key]);
         }
