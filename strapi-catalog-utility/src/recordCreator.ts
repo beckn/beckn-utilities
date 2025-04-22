@@ -32,8 +32,8 @@ export function getUniqueLocations(records: any[]) {
         state: record.State,
         country: record.Country,
         zip: record.zip,
-        latitude: record.gps.split(",")[0].trim(),
-        longitude: record.gps.split(",")[1].trim(),
+        // latitude: record.gps.split(",")[0].trim(),
+        // longitude: record.gps.split(",")[1].trim(),
         gps: record.gps
       };
     } catch (err) {
@@ -84,23 +84,33 @@ export function getUniqueCategories(records: any[]) {
 }
 
 export function getUniqueTags(records: any[]) {
-  const tags = [
-    ...new Set(
-      records.flatMap((rec) => {
-        const names = rec.tag_name.split(",");
-        return names.map((name: string) => name.trim());
-      })
-    )
-  ].filter((e) => e);
-  return tags.map((tag: string) => {
-    return {
-      tag_name: tag,
-      code: tag.toLowerCase().replace(" ", "_"),
-      value: tag,
-      display: true
-    };
+  const uniqueMap = new Map();
+
+  records.forEach((rec) => {
+    const names = rec.tag_name.split(",");
+    const codes = rec.code.split(",");
+    const values = rec.value.toString().split(",");
+
+    for (let i = 0; i < names.length; i++) {
+      const tag = names[i].trim();
+      const code = codes[i]?.trim() || tag;
+      const value = values[i]?.trim() || tag;
+      const key = `${tag}|${code}|${value}`;
+
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, {
+          tag_name: tag,
+          code,
+          value,
+          display: true
+        });
+      }
+    }
   });
+
+  return Array.from(uniqueMap.values());
 }
+
 
 export function getUniqueFulfillments(records: any[]) {
   const fulfillments = [
