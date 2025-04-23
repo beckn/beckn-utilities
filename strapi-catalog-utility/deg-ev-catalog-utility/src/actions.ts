@@ -9,7 +9,9 @@ export async function index(client: AxiosInstance, resources: string) {
     let pageCount = 0;
     do {
       const response: AxiosResponse = await client.get(
-        `${getIndexString(resources)}&pagination[page]=${currPage + 1}&pagination[pageSize]=100`
+        `${getIndexString(resources)}&pagination[page]=${
+          currPage + 1
+        }&pagination[pageSize]=100`
       );
       responseArray = responseArray.concat(response.data.data);
       currPage += 1;
@@ -17,7 +19,8 @@ export async function index(client: AxiosInstance, resources: string) {
     } while (currPage < pageCount);
     return responseArray;
   } catch (err: any) {
-    console.log(err.response);
+    console.log(err);
+    process.exit(1);
   }
 }
 
@@ -38,7 +41,7 @@ export async function safeCreate(
         for (const pk of pks) {
           let curr_result = false;
           if (pk.relation) {
-            curr_result = obj.attributes[pk.key].data.id === data[pk.key];
+            curr_result = obj.attributes[pk.key]?.data?.id === data[pk.key];
           } else {
             curr_result = obj.attributes[pk.key] === data[pk.key];
           }
@@ -46,14 +49,17 @@ export async function safeCreate(
         }
         return found;
       } catch (err: any) {
-        console.log(err.message);
+        console.log(err);
         console.log(obj);
         console.log(resources);
+        process.exit(1);
       }
     });
     if (!existingObject) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const response: AxiosResponse = await client.post(`/api/${resources}`, { data: data });
+      const response: AxiosResponse = await client.post(`/api/${resources}`, {
+        data: data
+      });
       // console.log(JSON.stringify(response.data));
     } else {
       // console.log(`Skipping creation of ${resources}:${data[pks[0]]} as it already exists`);
@@ -66,6 +72,7 @@ export async function safeCreate(
       console.log(err.message);
       console.log(pks);
       console.log(data);
+      process.exit(1);
     }
   }
 }
@@ -76,7 +83,8 @@ function getIndexString(resources: string) {
       return `/api/items?populate[0]=image&populate[1]=provider`;
     case "fulfilments":
       return `/api/fulfilments?`;
-
+    case "Providers":
+      return `/api/${resources}?&filters[domain_id]=5&populate=*`;
     default:
       return `/api/${resources}?populate=*`;
   }
