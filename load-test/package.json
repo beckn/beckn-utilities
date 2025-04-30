@@ -1,0 +1,19 @@
+{
+  "name": "load-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "i": "^0.3.7",
+    "k6": "^0.0.0",
+    "npm": "^10.8.1",
+    "uuid": "^10.0.0"
+  },
+  "scripts": {
+    "setup": "brew install k6 && mkdir results && mkdir reports",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:test": "k6 run scripts/index.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
