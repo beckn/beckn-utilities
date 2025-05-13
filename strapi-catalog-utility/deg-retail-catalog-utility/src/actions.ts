@@ -49,9 +49,9 @@ export async function safeCreate(
         }
         return found;
       } catch (err: any) {
-        console.log(err);
-        console.log(obj);
-        console.log(resources);
+        console.log("Error in safeCreate", err);
+        console.log("Error in safeCreate", obj);
+        console.log("Error in safeCreate", resources);
         process.exit(1);
       }
     });
@@ -66,12 +66,15 @@ export async function safeCreate(
     }
   } catch (err: any) {
     if (err.response && err.response.data && err.response.config) {
-      console.log(JSON.stringify(err.response?.data?.error));
-      console.log(err.response?.config?.data);
+      console.log(
+        "Error in safeCreate",
+        JSON.stringify(err.response?.data?.error)
+      );
+      console.log("Error in safeCreate", err.response?.config?.data);
     } else {
-      console.log(err.message);
-      console.log(pks);
-      console.log(data);
+      console.log("Error in safeCreate", err.message);
+      console.log("Error in safeCreate", pks);
+      console.log("Error in safeCreate", data);
       process.exit(1);
     }
   }

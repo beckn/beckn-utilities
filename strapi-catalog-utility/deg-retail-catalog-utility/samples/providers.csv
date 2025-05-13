@@ -1,11 +1,1 @@
-DOMAIN,provider_name,provider_short_desc,provider_long_desc,provider_Logo_image_url,provider_id,provider_uri,Address,City,State,Country,zip,gps
-deg:retail,VoltTrade Inc.,Battery Trade Experts,Specialized in battery purchase and sales,https://volttrade.com/logo.png,volttrade.retail,https://volttrade.com,101 Power Ave,Austin,Texas,USA,73301,"30.2672,-97.7431"
-deg:retail,BatteryBay Corp.,Retail battery vendor,Deals in all types of batteries,https://batterybay.com/logo.png,batterybay.retail,https://batterybay.com,99 Energy Street,San Jose,California,USA,95112,"37.3382,-121.8863"
-deg:retail,ElectroHub Solutions,Energy Storage Retailer,Batteries for residential & commercial use,https://electrohub.com/logo.png,electrohub.retail,https://electrohub.com,55 Storage Rd,Seattle,Washington,USA,98101,"47.6062,-122.3321"
-deg:retail,ChargeMaster USA,Battery sales experts,Suppliers of premium battery brands,https://chargemasterusa.com/logo.png,chargemaster.retail,https://chargemasterusa.com,404 Battery Blvd,Miami,Florida,USA,33101,"25.7617,-80.1918"
-deg:retail,PowerNest Batteries,Battery Superstore,Bulk and retail battery supply,https://powernest.com/logo.png,powernest.retail,https://powernest.com,88 Amp Lane,Denver,Colorado,USA,80014,"39.7392,-104.9903"
-deg:retail,AmpereDeals,Discount battery store,Competitive pricing for batteries,https://amperedeals.com/logo.png,amperedeals.retail,https://amperedeals.com,212 Volt Rd,Chicago,Illinois,USA,60007,"41.8781,-87.6298"
-deg:retail,VoltX Marketplace,Battery buying portal,Marketplace for buying batteries,https://voltxmarket.com/logo.png,voltx.retail,https://voltxmarket.com,333 Charge Street,Phoenix,Arizona,USA,85001,"33.4484,-112.0740"
-deg:retail,CellCore Retailers,Cell & battery retailers,Reliable battery cell distribution,https://cellcore.com/logo.png,cellcore.retail,https://cellcore.com,66 Circuit Ave,Atlanta,Georgia,USA,30301,"33.7490,-84.3880"
-deg:retail,EcoBattery Traders,Eco-friendly batteries,Specialists in green battery tech,https://ecobatterytraders.com/logo.png,ecobattery.retail,https://ecobatterytraders.com,7 Green Cell Rd,Portland,Oregon,USA,97035,"45.5051,-122.6750"
-deg:retail,GreenVolt Suppliers,Green battery solutions,Supplying sustainable batteries,https://greenvolt.com/logo.png,greenvolt.retail,https://greenvolt.com,121 Renewable Lane,Boston,MA,USA,02108,"42.3601,-71.0589"
+country_code,DOMAIN,provider_name,provider_short_desc,provider_long_desc,provider_Logo_image_url,provider_id,provider_uri,Address,City,State,Country,zip,gps

@@ -28,7 +28,6 @@ export async function createObjects(
       const keys = [];
       for (const pk of pks) {
         if (pk.relation) {
-          console.log(tObj.attributes[pk.key]);
           keys.push(tObj.attributes[pk.key]?.data?.id);
         } else {
           keys.push(tObj.attributes[pk.key]);
@@ -50,10 +49,7 @@ export const createPriceBreakups = async (
   client: AxiosInstance,
   pricebreakups: any[]
 ) => {
-  console.log(JSON.stringify(pricebreakups, null, 2));
-
   for (const priceBreakup of pricebreakups) {
-    console.log(priceBreakup);
     try {
       const base_price_response = await client.post(`/api/price-bareakups`, {
         data: priceBreakup.price_breakups[0]
@@ -61,14 +57,7 @@ export const createPriceBreakups = async (
       const tax_response = await client.post(`/api/price-bareakups`, {
         data: priceBreakup.price_breakups[1]
       });
-      console.log(`/api/sc-products/${priceBreakup.sc_retail_product_id}`, {
-        data: {
-          price_bareakup_ids: [
-            base_price_response.data.data.id,
-            tax_response.data.data.id
-          ]
-        }
-      });
+
       const sc_retail_products_updated = await client.put(
         `/api/sc-products/${priceBreakup.sc_retail_product_id}`,
         {
