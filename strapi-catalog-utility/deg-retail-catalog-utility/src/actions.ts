@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AxiosInstance, AxiosResponse } from "axios";
 import { PrimaryKey } from "./types";
-
+import dotenv from "dotenv";
+dotenv.config();
 export async function index(client: AxiosInstance, resources: string) {
   try {
     let responseArray: any[] = [];
@@ -87,7 +88,9 @@ function getIndexString(resources: string) {
     case "fulfilments":
       return `/api/fulfilments?`;
     case "Providers":
-      return `/api/${resources.toLowerCase()}?&filters[domain_id]=2&populate=*`;
+      return `/api/${resources.toLowerCase()}?&filters[domain_id]=${
+        process.env.DOMAIN_ID
+      }&populate=*`;
     default:
       return `/api/${resources}?populate=*`;
   }
