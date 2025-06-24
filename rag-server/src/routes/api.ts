@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { searchSimilarChunks } from '../services/vectorStore';
+import { generateResponse } from '../services/llmService';
 
 const router = Router();
 
@@ -39,26 +40,25 @@ router.post('/search/vector', async (req: Request, res: Response) => {
 });
 
 // LLM Query endpoint - search vector DB and process with LLM
-router.post('/ask', async (req: Request, res: Response) => {
+router.post('/search/llm', async (req: Request, res: Response) => {
   try {
-    const { query, limit = 5, threshold = 0.7 } = req.body;
+    const { query } = req.body;
     
     if (!query || typeof query !== 'string') {
       return res.status(400).json({ error: 'Query parameter is required and must be a string' });
     }
     
-    // TODO: Implement vector search + LLM processing
-    // This will be implemented when we add the vector store and LLM services
+    // Generate response using LLM service
+    const result = await generateResponse(query);
     
-    // Temporary placeholder response
     res.status(200).json({
-      message: 'LLM-enhanced search will be implemented soon',
       query,
-      limit,
-      threshold
+      answer: result.answer,
+      sources: result.sources,
+      hasSourceContext: result.hasSourceContext
     });
   } catch (error) {
-    console.error('Error in /ask endpoint:', error);
+    console.error('Error in /search/llm endpoint:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
