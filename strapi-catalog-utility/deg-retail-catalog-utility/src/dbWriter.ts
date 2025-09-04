@@ -51,11 +51,11 @@ export const createPriceBreakups = async (
 ) => {
   for (const priceBreakup of pricebreakups) {
     try {
-      const base_price_response = await client.post(`/api/price-bareakups`, {
-        data: priceBreakup.price_breakups[0]
-      });
+      // const base_price_response = await client.post(`/api/price-bareakups`, {
+      //   data: priceBreakup.price_breakups[0]
+      // });
       const tax_response = await client.post(`/api/price-bareakups`, {
-        data: priceBreakup.price_breakups[1]
+        data: priceBreakup.price_breakups[0]
       });
 
       const sc_retail_products_updated = await client.put(
@@ -63,7 +63,7 @@ export const createPriceBreakups = async (
         {
           data: {
             price_bareakup_ids: [
-              base_price_response.data.data.id,
+              // base_price_response.data.data.id,
               tax_response.data.data.id
             ]
           }
@@ -72,7 +72,7 @@ export const createPriceBreakups = async (
     } catch (error: any) {
       console.log(
         `error===> for ${JSON.stringify(priceBreakup, null, 2)}`,
-        error
+        error.response.data.error
       );
       process.exit(1);
     }

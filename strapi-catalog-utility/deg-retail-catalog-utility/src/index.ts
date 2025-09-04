@@ -33,12 +33,12 @@ async function main(providerFilename: string, itemFilename: string) {
     process.exit(1);
   }
 
-  const countries = getUniqueCountries(providerRecords);
-  console.log(`Countries: ${countries.length}`);
-  const countriesMap = await createObjects(client, "Countries", countries, [
-    { key: "name", relation: false },
-    { key: "code", relation: false }
-  ]);
+  // const countries = getUniqueCountries(providerRecords);
+  // console.log(`Countries: ${countries.length}`);
+  // const countriesMap = await createObjects(client, "Countries", countries, [
+  //   { key: "name", relation: false },
+  //   { key: "code", relation: false }
+  // ]);
 
   const domains = getUniqueDomains(providerRecords);
   console.log(`Domains: ${domains.length}`);
@@ -101,8 +101,8 @@ async function main(providerFilename: string, itemFilename: string) {
     providerRecords,
     domainsMap,
     locationsMap,
-    mediaMap,
-    countriesMap
+    mediaMap
+    // countriesMap
   );
   console.log(
     `Providers: ${providers.length} ${JSON.stringify(providers, null, 2)}`

@@ -243,8 +243,8 @@ export function getUniqueProviders(
   records: any[],
   domainsMap: any,
   locationsMap: any,
-  mediaMap: any,
-  countriesMap: any
+  mediaMap: any
+  // countriesMap: any
 ) {
   const providerHashes = [
     ...new Set(
@@ -253,7 +253,7 @@ export function getUniqueProviders(
       })
     )
   ].filter((e) => e);
-  console.log(countriesMap);
+  // console.log(countriesMap);
   return providerHashes.map((providerHash) => {
     const record = records.find(
       (rec) => rec.provider_name + ":::" + rec.gps === providerHash
@@ -267,8 +267,8 @@ export function getUniqueProviders(
       provider_uri: record.provider_uri,
       domain_id: domainsMap[record.DOMAIN],
       location_id: locationsMap[record.gps],
-      logo: mediaMap[record.provider_Logo_image_url],
-      country: countriesMap[`${record.Country}:::${record.country_code}`]
+      logo: mediaMap[record.provider_Logo_image_url]
+      // country: countriesMap[`${record.Country}:::${record.country_code}`]
     };
   });
 }
@@ -325,8 +325,9 @@ export function getUniqueSCRetailProducts(
     const itemKey = record.Item_name + ":::" + providersMap[providerKey];
     return {
       sku: record.sku,
-      min_price: record.min_price,
-      max_price: record.max_price,
+      // min_price: record.min_price,
+      // max_price: record.max_price,
+      base_fee: record.base_price,
       stock_quantity: record.stock_quantity,
       stock_status: record.stock_status,
       currency: record.currency,
@@ -552,16 +553,30 @@ export const createPriceBreakupObjects = (
           return {
             sc_retail_product_id: sc_retail_products_map[sc_retail_product],
             price_breakups: [
-              {
-                title: "BASE PRICE",
-                currency: matched_record.currency,
-                value: matched_record.base_price
-              },
+              // {
+              //   title: "BASE PRICE",
+              //   currency: matched_record.currency,
+              //   value: matched_record.base_price
+              // },
+              // {
+              //   title: "TAX",
+              //   currency: matched_record.currency,
+              //   value: matched_record.tax
+              // }
               {
                 title: "TAX",
                 currency: matched_record.currency,
-                value: matched_record.tax
+                price_breakup_category: 11,
+                item_id: matched_record.item_id,
+                is_item_qty_dependent: true
               }
+              // {
+              //   title: "CGST",
+              //   currency: matched_record.currency,
+              //   price_breakup_category: 1,
+              //   item_id: matched_record.item_id,
+              //   is_item_qty_dependent: true
+              // }
             ]
           };
         }
